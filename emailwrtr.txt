@@ -1,0 +1,56 @@
+Create a minimal full-stack web app that lets musicians generate customized pitch emails to establishments that host live music using the OpenAI GPT-4 API.
+
+Frontend:
+- A simple HTML + javascript form with the following input fields:
+  1. Info Dump (textarea) — Instructions: “Include as much detail as possible to help the AI write a compelling pitch email in your voice.”
+  2. 1–3 Live Performance Video Links — Each should have its own input field. Only one (the best fit) — Only one at a time will be used in each unique email
+  3. Preferred Email Personality Style (dropdown or text input, e.g., friendly, serious, confident, witty)
+  4. Name + Phone Number for Email Signature (textarea)
+  5. Availability for Next 3 Months (textarea)
+
+- A “Generate Pitch Email/s” button
+- After submission, the app should display the generated email in a large textarea so users can copy it easily
+
+Backend:
+- Use Node.js with Express
+- Add a POST endpoint `/generate-email` that:
+  - Accepts the form inputs
+  - Sends them to OpenAI GPT-4 via API
+  - Uses the following template prompt structure for GPT:
+
+You are a helpful AI writing expert who crafts persuasive booking pitch emails for musicians to get booked at establishments that host live music. I use the word establishments because some could be restaurants, or coffee shops, for example
+
+Write a pitch email from a musician to an establishment that hosts live music - it should sound authentic and compelling. The tone of the email should match the style provided. Use the info dump to capture their personality and music identity.
+
+Rules:
+
+Use only ONE of the provided video links at a time / 1 max per email 
+
+The salutation must use this placeholder: “Hi {{firstname}}” - DO NOT add a comma
+
+The email body can use the placeholder {{venue}} as needed, but never in the greetin. Availability provided should be listed in the email body as well as a call to action to lock in dates for a booking always
+
+
+End the email with the signature
+
+INPUTS:
+Artist Messaging: {{infoDump}}
+Video Links: {{videoLinks}}
+Tone Style: {{emailStyle}}
+Signature: {{signatureBlock}}
+Availability: {{availability}}
+
+Write a short, effective email in that artist's voice.
+
+vbnet
+Copy
+Edit
+
+Deployment:
+- Include instructions to run locally (npm install, node index.js, etc.)
+- Store OpenAI API key in `.env`
+- Include how to deploy to DigitalOcean (simple guide or Dockerfile if possible)
+
+Output:
+- Provide working frontend + backend code
+- Keep it easy to understand and edit
