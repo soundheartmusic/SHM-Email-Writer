@@ -41,7 +41,7 @@ The subject line must:
   * Never include merge tags in the subject line
 
 The email body must:
-- MAXIMUM 1000 CHARACTERS TOTAL - count carefully and stay under this limit
+- MAXIMUM 1000 CHARACTERS for main pitch content - availability dates/lists are EXTRA and don't count toward limit
 - Transform messy user input into professional, well-organized content but keep it EXTREMELY concise
 - Use short, punchy sentences - every word must add value
 - Maximum 3 brief paragraphs - each paragraph maximum 2 sentences
@@ -58,7 +58,7 @@ The email body must:
   * BANNED WORD: "venue" - use "establishment" instead
   * BANNED WORD: "stage" - use "perform", "play", "entertain" instead (many places don't have stages)
   * BANNED PHRASE: "at [location]" - use "for [location]" or rephrase completely
-  * BANNED: Any comma after {{firstname}} in salutation
+  * BANNED: Any comma, period, or punctuation after {{firstname}} in salutation - write "Hi {{firstname}}" ONLY
 - Use phrases like "truly honored" and "deeply grateful", but switch it up
 - Extract and highlight the most compelling information from the raw input
 - Present musician's experience and credentials in a logical, impressive order
@@ -70,23 +70,16 @@ The email body must:
   * Then on new line below that write "{{unsubscribe_link}}"
   * No extra spaces or characters
 
-Special handling for availability:
-- If availability is blank, contains "0", "open", "wide open", "flexible", "any time", or similar open-ended terms:
-  * DO NOT mention their wide availability
-  * Instead, use DIRECT call-to-action phrases like:
-    - "What date/s do you have open; would you like to lock-in some dates?"
-    - "Which upcoming dates work best for your establishment; shall we book something?"
-    - "What dates are you looking to fill; can we secure some performance slots?"
-- For specific dates/times:
-  * Briefly mention them with DIRECT booking CTAs like "Are these dates available; can we confirm?"
+
 
 First output the subject line.
 Then a blank line.
 Then the email body.
 
 MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
-- CHARACTER LIMIT: Email body must be 1000 characters or less - COUNT CHARACTERS and cut ruthlessly
-- SALUTATION: Must be exactly "Hi {{firstname}}" with NO comma, NO punctuation after firstname
+- CHARACTER LIMIT: The main email content (pitch/intro) must be 1000 characters or less - availability dates/info do NOT count toward this limit
+
+- SALUTATION RULE: Write EXACTLY "Hi {{firstname}}" - NO COMMA, NO COMMA, NO COMMA after firstname - this prevents "Hi ," when firstname is blank
 - BANNED WORDS: Never use "stage", "venue", or "at [location]" anywhere in the email
 - CRITICAL: {{venue}} can appear EXACTLY ONE TIME in the entire email - COUNT EVERY USAGE - if you use it once, DO NOT use it again anywhere else
 - When {{venue}} is used, it must be "for {{venue}}" - never "at {{venue}}"
@@ -96,10 +89,11 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - IMPROVE PRESENTATION: Fix grammar, structure, and flow while maintaining authenticity
 - Keep the email brief and polite but prioritize CONCISENESS over excessive politeness
 - Use only ONE of the provided video links at a time / 1 max per email
-- The salutation must be EXACTLY: "Hi {{firstname}}" with NO COMMA, NO PUNCTUATION after firstname (prevents "Hi ," if firstname is blank)
+- The salutation must be EXACTLY: "Hi {{firstname}}" with ABSOLUTELY NO COMMA, NO PUNCTUATION after firstname (prevents "Hi ," when firstname is blank)
 - The email body can use the placeholder {{venue}} exactly once maximum, but never in the greeting or salutation
-- Include availability as a polite mention
-- End with a DIRECT call-to-action that asks for specific action (dates, booking, confirmation) before the signature
+
+- Include the musician's availability information in the email body - integrate it naturally and professionally
+- End with a STRONG, DIRECT call-to-action using a question format that demands a response (e.g., "Which dates work best for you?", "Can we lock in some performance dates?", "What upcoming dates are you looking to fill?")
 - Use phrases that show deep appreciation and respect
 - Always express genuine gratitude for their time and consideration
 - Maintain professional warmth throughout

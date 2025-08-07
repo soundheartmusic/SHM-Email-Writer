@@ -13,12 +13,6 @@ const { GPT_MODEL, TEMPERATURE, EMAIL_TEMPLATE } = require('./constants');
 function generateEmailPrompt(userData) {
   const { infoDump, videoLinks, emailStyle, signatureBlock, availability } = userData;
   
-  // Check if availability is open-ended
-  const openEndedTerms = ['0', 'open', 'wide open', 'flexible', 'any time', 'anytime', 'always'];
-  const isOpenEnded = openEndedTerms.some(term => 
-    availability.toLowerCase().includes(term.toLowerCase())
-  );
-
   // Extract music style/genre hints from infoDump for better subject line generation
   const musicKeywords = infoDump.toLowerCase().match(/(?:jazz|blues|rock|folk|classical|acoustic|pop|electronic|latin|country|indie|soul|r&b|hip.?hop|reggae|world|fusion)/g) || [];
   
@@ -30,7 +24,7 @@ Music Keywords: ${musicKeywords.join(', ')}
 Video Links: ${videoLinks.join(', ')}
 Tone Style: ${emailStyle}
 Signature: ${signatureBlock}
-Availability: ${isOpenEnded ? 'OPEN_ENDED' : availability}
+Availability: ${availability}
 
 Write a short, effective email in that artist's voice. After the signature, add this exact footer (including all blank lines):
 
