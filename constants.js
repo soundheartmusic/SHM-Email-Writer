@@ -58,17 +58,177 @@ The email body must:
   * BANNED WORD: "venue" - use "establishment" instead
   * BANNED WORD: "stage" - use "perform", "play", "entertain" instead (many places don't have stages)
   * BANNED PHRASE: "at [location]" - use "for [location]" or rephrase completely
-  * BANNED: Any comma, period, or punctuation after {{firstname}} in salutation - write "Hi {{firstname}}" ONLY
+  * BANNED: Any comma, period, or punctuation after {{firstname}} in salutation - write "Hi {{firstname}}" ONLY - NO COMMA EVER AFTER FIRSTNAME
+  * CRITICAL: The salutation "Hi {{firstname}}" must NEVER have a comma - it should be "Hi {{firstname}}" NOT "Hi {{firstname}},"
+  * BANNED PHRASES: "wide open", "completely available", "calendar is open", "we are available" - these make artists look unprofessional and not in demand
+  * BANNED: Mentioning artist availability - instead ask about VENUE's available dates
+  * BANNED: Duplicate video links - use each video link only ONCE per email, never repeat the same URL
 - Use phrases like "truly honored" and "deeply grateful", but switch it up
 - Extract and highlight the most compelling information from the raw input
 - Present musician's experience and credentials in a logical, impressive order
 - Clean up any technical jargon or unclear descriptions
 - Make the musician sound professional and polished regardless of input quality
-- ALWAYS include the exact footer format with:
-  * Exactly 100 blank lines
-  * Then "Remove future contact here"
-  * Then on new line below that write "{{unsubscribe_link}}"
-  * No extra spaces or characters
+- ALWAYS include the exact footer format with this EXACT spacing pattern:
+  * After the signature and contact info, add exactly this many blank lines:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  * Then write exactly: "Remove future contact here"
+  * Then on the next line write exactly: "{{unsubscribe_link}}"
+  * This massive spacing hides the unsubscribe from normal viewing so emails look personal
 
 
 
@@ -79,7 +239,7 @@ Then the email body.
 MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - CHARACTER LIMIT: The main email content (pitch/intro) must be 1000 characters or less - availability dates/info do NOT count toward this limit
 
-- SALUTATION RULE: Write EXACTLY "Hi {{firstname}}" - NO COMMA, NO COMMA, NO COMMA after firstname - this prevents "Hi ," when firstname is blank
+- SALUTATION RULE: Write EXACTLY "Hi {{firstname}}" - NO COMMA NO COMMA NO COMMA NO COMMA - NEVER EVER PUT A COMMA AFTER {{firstname}} - this prevents "Hi ," when firstname is blank - ZERO TOLERANCE FOR COMMAS IN SALUTATION - THE SALUTATION MUST END IMMEDIATELY AFTER {{firstname}} WITH NO PUNCTUATION WHATSOEVER
 - BANNED WORDS: Never use "stage", "venue", or "at [location]" anywhere in the email
 - CRITICAL: {{venue}} can appear EXACTLY ONE TIME in the entire email - COUNT EVERY USAGE - if you use it once, DO NOT use it again anywhere else
 - When {{venue}} is used, it must be "for {{venue}}" - never "at {{venue}}"
@@ -88,11 +248,22 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - EXTRACT KEY POINTS: Identify the most compelling information and present it clearly
 - IMPROVE PRESENTATION: Fix grammar, structure, and flow while maintaining authenticity
 - Keep the email brief and polite but prioritize CONCISENESS over excessive politeness
-- Use only ONE of the provided video links at a time / 1 max per email
+- VIDEO LINK FORMATTING RULES:
+  * Use only ONE of the provided video links at a time / 1 max per email
+  * NEVER duplicate video links or show the same link multiple times
+  * Format video links as clean, single clickable links: just the URL, no brackets, no duplicates
+  * Example: "Watch our performance: https://youtu.be/example" NOT "[https://youtu.be/example](https://youtu.be/example)"
+  * NEVER include the same video link twice in one email
 - The salutation must be EXACTLY: "Hi {{firstname}}" with ABSOLUTELY NO COMMA, NO PUNCTUATION after firstname (prevents "Hi ," when firstname is blank)
 - The email body can use the placeholder {{venue}} exactly once maximum, but never in the greeting or salutation
 
-- Include the musician's availability information in the email body - integrate it naturally and professionally
+- AVAILABILITY RULES - CRITICAL FOR PROFESSIONAL IMAGE:
+  * NEVER EVER say "we are wide open", "calendar is wide open", "completely available", or similar phrases - this makes the artist look unprofessional and not in demand
+  * NEVER mention the artist being "available" or "open" - this is a red flag to venues
+  * INSTEAD: Focus on what dates the VENUE has open - flip the frame to their availability
+  * If user input says "wide open" or similar, IGNORE IT and ask about venue's openings instead
+  * Use phrases like "What dates work best for your establishment?", "Which upcoming dates are you looking to fill?", "What performance slots do you have available?"
+  * If specific dates are provided, include them but frame as "These dates could work well" rather than "We're available on"
 - End with a STRONG, DIRECT call-to-action using a question format that demands a response (e.g., "Which dates work best for you?", "Can we lock in some performance dates?", "What upcoming dates are you looking to fill?")
 - Use phrases that show deep appreciation and respect
 - Always express genuine gratitude for their time and consideration
@@ -105,4 +276,4 @@ module.exports = {
   GPT_MODEL,
   TEMPERATURE,
   EMAIL_TEMPLATE
-}; 
+};

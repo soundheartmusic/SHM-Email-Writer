@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundheart Music - Follow-Up Ideas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .soundheart-red {
+            background-color: #dc2626;
+        }
+        .soundheart-red-hover {
+            background-color: #b91c1c;
+        }
+        .soundheart-bg {
+            background-color: #f8fafc;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .loading.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="soundheart-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-4xl font-bold text-center mb-4 text-gray-800">Soundheart Music</h1>
+        <h2 class="text-xl text-center mb-8 text-gray-600">Follow-Up Email Ideas</h2>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">Review and Edit Follow-Up Ideas</h3>
+            <p class="text-sm text-gray-600 mb-6">The AI has identified 7 key talking points for your follow-up emails. Edit any ideas below, then approve to generate the complete sequence.</p>
+            
+            <div id="ideasContainer" class="space-y-4">
+                <!-- Ideas will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button 
+                id="approveIdeasBtn"
+                class="soundheart-red text-white py-4 px-8 rounded-md hover:soundheart-red-hover focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 font-semibold text-lg transition-colors"
+            >
+                Approve & Generate Follow-Ups
+            </button>
+            <p class="mt-2 text-sm text-gray-600">This will create 7 follow-up emails based on these ideas</p>
+        </div>
+    </div>
+
+    <div class="loading">
+        <div class="bg-white p-4 rounded-lg">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+            <p class="mt-2 text-gray-700">Generating follow-up sequence...</p>
+        </div>
+    </div>
+
+    <script>
+        // Load and display ideas
+        document.addEventListener('DOMContentLoaded', () => {
+            const ideas = JSON.parse(sessionStorage.getItem('followUpIdeas') || '[]');
+            const container = document.getElementById('ideasContainer');
+            
+            ideas.forEach((idea, index) => {
+                const ideaDiv = document.createElement('div');
+                ideaDiv.className = 'border rounded-lg p-4';
+                ideaDiv.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Follow-Up #${index + 1}</label>
+                    <textarea 
+                        class="w-full p-3 border rounded-md focus:ring-red-500 focus:border-red-500" 
+                        rows="2"
+                        data-index="${index}"
+                    >${idea}</textarea>
+                `;
+                container.appendChild(ideaDiv);
+            });
+        });
+
+        // Handle approval - generate first email only
+        document.getElementById('approveIdeasBtn').addEventListener('click', async () => {
+            const loading = document.querySelector('.loading');
+            loading.classList.add('active');
+            loading.querySelector('p').textContent = 'Generating first follow-up email...';
+
+            // Collect updated ideas
+            const textareas = document.querySelectorAll('#ideasContainer textarea');
+            const updatedIdeas = Array.from(textareas).map(textarea => textarea.value);
+            
+            const followUpData = JSON.parse(sessionStorage.getItem('followUpData'));
+            
+            try {
+                // Generate only the first follow-up email (index 0)
+                const response = await fetch('/generate-single-followup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...followUpData,
+                        idea: updatedIdeas[0], // First idea
+                        emailIndex: 0, // First email
+                        fromName: followUpData.approvedFromName || followUpData.signatureBlock.split('\n')[0] || 'Musician Name'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Store the ideas and first email, then navigate
+                    sessionStorage.setItem('followUpIdeas', JSON.stringify(updatedIdeas));
+                    sessionStorage.setItem('currentFollowUpIndex', '0');
+                    sessionStorage.setItem('currentFollowUpEmail', JSON.stringify(result));
+                    sessionStorage.setItem('approvedFromName', result.fromName);
+                    window.location.href = '/followup-email.html';
+                } else {
+                    alert('Failed to generate follow-up email: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                loading.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
