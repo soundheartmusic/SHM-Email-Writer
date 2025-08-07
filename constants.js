@@ -41,14 +41,24 @@ The subject line must:
   * Never include merge tags in the subject line
 
 The email body must:
-- Transform messy user input into professional, well-organized content
-- Use short, clear sentences
-- Maximum 3 brief paragraphs
-- Keep each paragraph 2-3 sentences max
-- Try and stay away from compound sentences
-- Be overly polite and gracious
-- Match the requested tone
-- Never write another word before "{{venue}}" in the email body besides for "for", so "for {{venue}}" is fine, but "at {{venue}}" is bad.
+- MAXIMUM 1000 CHARACTERS TOTAL - count carefully and stay under this limit
+- Transform messy user input into professional, well-organized content but keep it EXTREMELY concise
+- Use short, punchy sentences - every word must add value
+- Maximum 3 brief paragraphs - each paragraph maximum 2 sentences
+- Final paragraph must be 1-2 sentences with DIRECT call-to-action asking for specific action (booking, dates, confirmation)
+- Eliminate all unnecessary words, filler phrases, and redundancy
+- Be polite but CONCISE - recipients have short attention spans
+- Pack maximum information into minimum words
+- CRITICAL MERGE TAG RULES - COUNT CAREFULLY:
+  * {{venue}} appears EXACTLY ONCE in entire email - COUNT every single usage before writing
+  * After using {{venue}} one time, use alternative phrases like "your establishment", "your event", "this opportunity"
+  * ONLY use "for {{venue}}" - NEVER "at {{venue}}", "with {{venue}}", "to {{venue}}" or any other preposition
+  * Never use {{venue}} in the salutation/greeting
+- ABSOLUTE WORD RESTRICTIONS - ZERO TOLERANCE:
+  * BANNED WORD: "venue" - use "establishment" instead
+  * BANNED WORD: "stage" - use "perform", "play", "entertain" instead (many places don't have stages)
+  * BANNED PHRASE: "at [location]" - use "for [location]" or rephrase completely
+  * BANNED: Any comma after {{firstname}} in salutation
 - Use phrases like "truly honored" and "deeply grateful", but switch it up
 - Extract and highlight the most compelling information from the raw input
 - Present musician's experience and credentials in a logical, impressive order
@@ -61,33 +71,39 @@ The email body must:
   * No extra spaces or characters
 
 Special handling for availability:
-- If availability contains "0", "open", "wide open", "flexible", "any time", or similar open-ended terms:
+- If availability is blank, contains "0", "open", "wide open", "flexible", "any time", or similar open-ended terms:
   * DO NOT mention their wide availability
-  * Instead, use phrases like:
-    - "I'd love to discuss potential performance dates"
-    - "Please let me know which dates work best for your venue"
-    - "I'm eager to learn about your upcoming scheduling needs"
+  * Instead, use DIRECT call-to-action phrases like:
+    - "What date/s do you have open; would you like to lock-in some dates?"
+    - "Which upcoming dates work best for your establishment; shall we book something?"
+    - "What dates are you looking to fill; can we secure some performance slots?"
 - For specific dates/times:
-  * Briefly mention them in a clear, concise way
+  * Briefly mention them with DIRECT booking CTAs like "Are these dates available; can we confirm?"
 
 First output the subject line.
 Then a blank line.
 Then the email body.
 
-Rules:
+MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
+- CHARACTER LIMIT: Email body must be 1000 characters or less - COUNT CHARACTERS and cut ruthlessly
+- SALUTATION: Must be exactly "Hi {{firstname}}" with NO comma, NO punctuation after firstname
+- BANNED WORDS: Never use "stage", "venue", or "at [location]" anywhere in the email
+- CRITICAL: {{venue}} can appear EXACTLY ONE TIME in the entire email - COUNT EVERY USAGE - if you use it once, DO NOT use it again anywhere else
+- When {{venue}} is used, it must be "for {{venue}}" - never "at {{venue}}"
+- CONCISENESS: Every word must serve a purpose - eliminate fluff, redundancy, and unnecessary politeness
 - ORGANIZE AND CLEAN UP: Transform any messy, disorganized input into professional content
 - EXTRACT KEY POINTS: Identify the most compelling information and present it clearly
 - IMPROVE PRESENTATION: Fix grammar, structure, and flow while maintaining authenticity
-- Keep the email brief but exceptionally polite and gracious
+- Keep the email brief and polite but prioritize CONCISENESS over excessive politeness
 - Use only ONE of the provided video links at a time / 1 max per email
-- The salutation must use this placeholder: "Hi {{firstname}}" - DO NOT add a comma
-- The email body can use the placeholder {{venue}} as needed, but never in the greeting
+- The salutation must be EXACTLY: "Hi {{firstname}}" with NO COMMA, NO PUNCTUATION after firstname (prevents "Hi ," if firstname is blank)
+- The email body can use the placeholder {{venue}} exactly once maximum, but never in the greeting or salutation
 - Include availability as a polite mention
-- End with a gracious call to action and the signature
+- End with a DIRECT call-to-action that asks for specific action (dates, booking, confirmation) before the signature
 - Use phrases that show deep appreciation and respect
 - Always express genuine gratitude for their time and consideration
 - Maintain professional warmth throughout
-- Keep the overall length concise but ensure politeness is never sacrificed
+- Prioritize brevity and impact - busy recipients need quick, actionable information
 - Make every musician sound professional and polished regardless of input quality`;
 
 module.exports = {
