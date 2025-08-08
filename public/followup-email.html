@@ -123,6 +123,9 @@
             document.getElementById('waitDays').value = emailData.waitDays || 7;
             document.getElementById('emailSubject').value = emailData.subject || '';
             document.getElementById('emailMessage').value = emailData.email || '';
+            
+            // Scroll message field to top to show content instead of blank lines
+            document.getElementById('emailMessage').scrollTop = 0;
 
             // Update button text for last email
             const nextBtn = document.getElementById('approveNextBtn');

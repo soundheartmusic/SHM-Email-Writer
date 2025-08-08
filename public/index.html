@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -237,6 +238,9 @@
                     document.getElementById('generatedSubject').value = result.subject;
                     document.getElementById('generatedEmail').value = result.email;
                     
+                    // Scroll message field to top to show content instead of blank lines
+                    document.getElementById('generatedEmail').scrollTop = 0;
+                    
                     // Extract and populate the "From Name" field with just the real name
                     const signature = document.getElementById('signature').value;
                     const fromName = extractRealName(signature);
@@ -345,6 +349,9 @@
                     // Update the generated email fields
                     document.getElementById('generatedSubject').value = result.subject;
                     document.getElementById('generatedEmail').value = result.email;
+                    
+                    // Scroll message field to top to show content instead of blank lines
+                    document.getElementById('generatedEmail').scrollTop = 0;
                     
                     // Re-extract and update the "From Name" field
                     const signature = document.getElementById('signature').value;

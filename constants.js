@@ -22,18 +22,18 @@ Generate a very short subject line and concise email body.
 The subject line must:
 - Be 2-4 words ONLY
 - Start with "SUBJECT:"
-- Use these high-engagement techniques:
-  * Ask an intriguing question, as one example
-  * Create curiosity gap
-  * Imply exclusivity
-  * Suggest urgency (but stay professional)
-  * Reference specific music style/genre
-- Examples:
-  * "Ready for Fresh Jazz?"
-  * "Blues Tonight?"
-  * "Touring singer headed near you"
-  * "Your live music the other day"
-  * "Latin Jazz This Summer?"
+- Use psychology-driven engagement techniques:
+  * Create curiosity and intrigue ("Have you given up on this?", "Still looking for music?")
+  * Ask questions that make them wonder ("Did you find someone already?", "Is this still a priority?")
+  * Imply urgency without being pushy ("Last chance for music", "Final opportunity")
+  * Make it sound like a legitimate inquiry, not a sales pitch
+- Examples of engaging subjects:
+  * "Have you given up on this?"
+  * "Live music this weekend?"
+  * "Still looking for entertainment?"
+  * "Did you find someone already?"
+  * "Quick question about music"
+  * "Is this still a priority?"
 - NEVER use generic subjects like:
   * "Live Music Inquiry"
   * "Booking Request"
@@ -51,7 +51,8 @@ The email body must:
 - Pack maximum information into minimum words
 - CRITICAL MERGE TAG RULES - COUNT CAREFULLY:
   * {{venue}} appears EXACTLY ONCE in entire email - COUNT every single usage before writing
-  * After using {{venue}} one time, use alternative phrases like "your establishment", "your event", "this opportunity"
+  * {{venue}} must ONLY appear in the FIRST PARAGRAPH - never in subsequent paragraphs
+  * After using {{venue}} one time in first paragraph, use alternative phrases like "your establishment", "your event", "this opportunity"
   * ONLY use "for {{venue}}" - NEVER "at {{venue}}", "with {{venue}}", "to {{venue}}" or any other preposition
   * Never use {{venue}} in the salutation/greeting
 - ABSOLUTE WORD RESTRICTIONS - ZERO TOLERANCE:
@@ -69,7 +70,7 @@ The email body must:
 - Clean up any technical jargon or unclear descriptions
 - Make the musician sound professional and polished regardless of input quality
 - ALWAYS include the exact footer format with this EXACT spacing pattern:
-  * After the signature and contact info, add exactly this many blank lines:
+  * After the signature and contact info, add exactly 200 blank lines:
 
 
 
@@ -242,6 +243,7 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - SALUTATION RULE: Write EXACTLY "Hi {{firstname}}" - NO COMMA NO COMMA NO COMMA NO COMMA - NEVER EVER PUT A COMMA AFTER {{firstname}} - this prevents "Hi ," when firstname is blank - ZERO TOLERANCE FOR COMMAS IN SALUTATION - THE SALUTATION MUST END IMMEDIATELY AFTER {{firstname}} WITH NO PUNCTUATION WHATSOEVER
 - BANNED WORDS: Never use "stage", "venue", or "at [location]" anywhere in the email
 - CRITICAL: {{venue}} can appear EXACTLY ONE TIME in the entire email - COUNT EVERY USAGE - if you use it once, DO NOT use it again anywhere else
+- VENUE PLACEMENT RULE: {{venue}} must ONLY be used in the FIRST PARAGRAPH - never in second or third paragraphs
 - When {{venue}} is used, it must be "for {{venue}}" - never "at {{venue}}"
 - CONCISENESS: Every word must serve a purpose - eliminate fluff, redundancy, and unnecessary politeness
 - ORGANIZE AND CLEAN UP: Transform any messy, disorganized input into professional content
@@ -254,8 +256,9 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
   * Format video links as clean, single clickable links: just the URL, no brackets, no duplicates
   * Example: "Watch our performance: https://youtu.be/example" NOT "[https://youtu.be/example](https://youtu.be/example)"
   * NEVER include the same video link twice in one email
+  * Video links should be distributed evenly across the email sequence
 - The salutation must be EXACTLY: "Hi {{firstname}}" with ABSOLUTELY NO COMMA, NO PUNCTUATION after firstname (prevents "Hi ," when firstname is blank)
-- The email body can use the placeholder {{venue}} exactly once maximum, but never in the greeting or salutation
+- The email body can use the placeholder {{venue}} exactly once maximum in the first paragraph only, never in greeting or subsequent paragraphs
 
 - AVAILABILITY RULES - CRITICAL FOR PROFESSIONAL IMAGE:
   * NEVER EVER say "we are wide open", "calendar is wide open", "completely available", or similar phrases - this makes the artist look unprofessional and not in demand
@@ -269,7 +272,20 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - Always express genuine gratitude for their time and consideration
 - Maintain professional warmth throughout
 - Prioritize brevity and impact - busy recipients need quick, actionable information
-- Make every musician sound professional and polished regardless of input quality`;
+- Make every musician sound professional and polished regardless of input quality
+- FOLLOW-UP EMAIL VARIATION: Each follow-up email must be WILDLY different in wording, approach, and structure from previous emails while maintaining the core message and user's requested tone/style
+
+- FOLLOW-UP CONTENT REQUIREMENTS - PROVIDE NEW VALUE EACH TIME:
+  * Email #1: Focus on credentials/experience - "We've performed at [venues/events]"
+  * Email #2: Focus on audience engagement - "Our performances create [atmosphere/energy]"
+  * Email #3: Focus on logistics/professionalism - "We handle all setup/sound professionally"
+  * Email #4: Focus on repertoire/music style - "Our setlist includes [genre variety]"
+  * Email #5: Focus on testimonials/social proof - "Previous venues have said [feedback]"
+  * Email #6: Last chance urgency - "We're finalizing our calendar"
+  * Email #7: Final goodbye - "We understand you're not interested"
+  * Each email should introduce NEW information, angles, or benefits not mentioned before
+  * Never repeat the same selling points or phrases from previous emails
+  * Provide fresh reasons why they should book in each follow-up`;
 
 module.exports = {
   DEFAULT_PORT,
