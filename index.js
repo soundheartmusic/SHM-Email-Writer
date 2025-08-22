@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 const path = require('path');
-const { DEFAULT_PORT, EMAIL_TEMPLATE } = require('./constants');
+const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS } = require('./constants');
 const { generateEmailPrompt, callOpenAI } = require('./emailGenerator');
 
 // Initialize Express app
@@ -127,10 +127,12 @@ app.post('/generate-followup-sequence', async (req, res) => {
         SUBJECT LINE: Use finality with psychology like "Final note about music", "Moving on from live music", "Last message about entertainment"
         EMAIL BODY: Start with "I wanted to reach out one final time about live music for {{venue}}." Politely acknowledge they haven't responded and you understand they're not interested. Be gracious but make it clear this is the end.`;
       } else {
+        // Randomly select a disclaimer variation for each follow-up email
+        const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
         specialInstructions = `This is follow-up email #${i + 1}. 
-        SUBJECT LINE: Use psychology-driven curiosity like "Still looking for live music?", "Quick question about entertainment", "Did you find someone already?", "Is live music still a priority?"
+        SUBJECT LINE: Use professional, venue-appropriate psychology like "Live music this weekend?", "A+ Singer for you", "Have you given up?", "Pro Live Band", "Quick question"
         EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." Make this email COMPLETELY different from previous ones in wording and approach while staying on the concept focus.`;
-        footerMessage = '\n\nIf it\'s not a good fit, just let me know, and I won\'t reach out again :)';
+        footerMessage = `\n\n${randomDisclaimer}`;
       }
 
       const prompt = `${EMAIL_TEMPLATE}
@@ -158,7 +160,7 @@ VIDEO LINK DISTRIBUTION: This is email #${i + 1} using video link #${linkIndex +
 
 ${specialInstructions}
 
-${footerMessage ? `IMPORTANT: Add this exact message before the signature: "${footerMessage}"` : ''}`;
+${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its own line BEFORE the signature block: "${footerMessage}"` : ''}`;
       
       const completion = await openai.chat.completions.create({
         model: 'gpt-4',
@@ -230,11 +232,13 @@ app.post('/generate-single-followup', async (req, res) => {
     } else {
       specialInstructions = `This is follow-up email #${emailIndex + 1}. 
       CONTENT FOCUS: ${contentFocus[emailIndex]} - This must be the PRIMARY focus and provide NEW information not covered in previous emails.
-      SUBJECT LINE: Use psychology-driven curiosity like "Still looking for live music?", "Quick question about entertainment", "Did you find someone already?", "Is live music still a priority?"
+      SUBJECT LINE: Use professional, venue-appropriate psychology like "Live music this weekend?", "A+ Singer for you", "Have you given up?", "Pro Live Band", "Quick question"
       EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." 
       CRITICAL: Make this email COMPLETELY different from previous ones by focusing specifically on ${contentFocus[emailIndex]}. Do NOT repeat selling points from other emails.
       PROVIDE NEW INFORMATION: Each email must introduce fresh angles and benefits. If this is about ${contentFocus[emailIndex]}, make sure to provide specific details and value propositions related to this focus area only.`;
-      footerMessage = '\n\nIf it\'s not a good fit, just let me know, and I won\'t reach out again :)';
+      // Randomly select a disclaimer variation for each follow-up email
+      const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
+      footerMessage = `\n\n${randomDisclaimer}`;
     }
     
     const prompt = `${EMAIL_TEMPLATE}
@@ -262,7 +266,7 @@ VIDEO LINK DISTRIBUTION: This is email #${emailIndex + 1} using video link #${li
 
 ${specialInstructions}
 
-${footerMessage ? `IMPORTANT: Add this exact message before the signature: "${footerMessage}"` : ''}`;
+${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its own line BEFORE the signature block: "${footerMessage}"` : ''}`;
     
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
@@ -330,11 +334,13 @@ app.post('/regenerate-followup-email', async (req, res) => {
     } else {
       specialInstructions = `This is follow-up email #${emailIndex + 1}. 
       CONTENT FOCUS: ${contentFocus[emailIndex]} - This must be the PRIMARY focus and provide NEW information not covered in previous emails.
-      SUBJECT LINE: Use psychology-driven curiosity like "Still looking for live music?", "Quick question about entertainment", "Did you find someone already?", "Is live music still a priority?"
+      SUBJECT LINE: Use professional, venue-appropriate psychology like "Live music this weekend?", "A+ Singer for you", "Have you given up?", "Pro Live Band", "Quick question"
       EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." 
       CRITICAL: Make this email COMPLETELY different from previous ones by focusing specifically on ${contentFocus[emailIndex]}. Do NOT repeat selling points from other emails.
       PROVIDE NEW INFORMATION: Each email must introduce fresh angles and benefits. If this is about ${contentFocus[emailIndex]}, make sure to provide specific details and value propositions related to this focus area only.`;
-      footerMessage = '\n\nIf it\'s not a good fit, just let me know, and I won\'t reach out again :)';
+      // Randomly select a disclaimer variation for each follow-up email
+      const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
+      footerMessage = `\n\n${randomDisclaimer}`;
     }
 
     const prompt = `${EMAIL_TEMPLATE}
@@ -364,7 +370,7 @@ REGENERATION REQUIREMENT: Make this version WILDLY DIFFERENT from the original -
 
 ${specialInstructions}
 
-${footerMessage ? `IMPORTANT: Add this exact message before the signature: "${footerMessage}"` : ''}`;
+${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its own line BEFORE the signature block: "${footerMessage}"` : ''}`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
