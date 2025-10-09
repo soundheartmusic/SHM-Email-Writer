@@ -44,21 +44,40 @@ Generate a very short subject line and concise email body with MAXIMUM DIVERSITY
 CRITICAL TONE BALANCE: Always maintain an exceptionally polite and gracious foundation while seamlessly blending in the user's specified "Email Personality Style" from their input. The politeness should never be compromised, but should be expressed through their chosen personality style.
 
 The subject line must:
-- Be 2-4 words ONLY
+- Be 2-6 words ONLY (expanded for more engaging options)
 - Start with "SUBJECT:"
 - CRITICAL: Use WILDLY DIFFERENT approaches for each email to avoid spam detection across thousands of users worldwide
 - NEVER include merge tags in the subject line - keep them completely clean
-- AVOID clickbait or spam-like language - keep professional but engaging
-- Rotate through completely different psychological triggers and styles:
-  * MUSIC-SPECIFIC CURIOSITY: "Live music this weekend?", "Live music this month?", "Have you given up?", "Still booking acts?", "Need live music?"
-  * PROFESSIONAL QUESTIONS: "Did you find someone?", "Still a priority?", "Plans still on?", "Still interested?", "Booking complete?"
-  * CASUAL CHECK-INS: "Quick question", "Just wondering", "Checking in", "Following up", "Quick thought", "Brief note"
-  * TIMING-BASED: "This weekend?", "Next month?", "This season?", "Coming up?", "Soon available?", "Open dates?"
-  * SKILL/GENRE FOCUSED: "A+ Singer for you", "Pro Live Band", "Live Saxophone = Luxury", "Jazz Fusion Band", "Acoustic Guitar Duo"
-  * EXPERIENCE-BASED: "Feedback from performances", "Recent venue testimonials", "Professional references", "Past venue reviews"
-  * VALUE PROPOSITIONS: "Unforgettable Jazz show", "Premium live entertainment", "Professional music experience", "Quality live performance"
+- CREATE IRRESISTIBLE CURIOSITY that makes recipients NEED to open the email
+- Each subject line must be DIRECTLY RELEVANT to that specific email's unique content focus
+- DYNAMICALLY EXTRACT from the artist's info dump to create personalized, curiosity-driven subjects
+- Use psychological triggers that create urgency, curiosity, and emotional engagement while staying relevant to "awesome artist wants to play at your venue"
+
+DYNAMIC SUBJECT LINE GENERATION RULES:
+- ANALYZE the artist's info dump to extract their most compelling credentials, achievements, and unique selling points
+- CREATE CURIOSITY GAPS around their specific accomplishments without revealing everything
+- MATCH subject lines to the specific accolade/focus being discussed in that email
+- ENSURE each subject makes the recipient think "I need to know more about this artist"
+
+Subject Line Categories (choose based on email content):
+  * CREDENTIAL TEASERS: "The [venue type] that changed everything", "What [X years] of performing taught me", "Why [notable venue] called back", "The [achievement] story"
+  * SOCIAL PROOF HINTS: "What happened after [specific performance]", "The [venue/event] response", "Why [genre] fans keep asking", "The [location] phenomenon"
+  * EXPERIENCE MYSTERIES: "The [number] show milestone", "What [specific venue type] owners notice", "The [genre] secret weapon", "Why [achievement] matters"
+  * GENRE/STYLE INTRIGUE: "The [specific genre] advantage", "What [instrument/style] really does", "The [musical approach] difference", "Why [style] works perfectly"
+  * ACHIEVEMENT HOOKS: "The [award/recognition] effect", "What [specific accomplishment] means", "The [credential] advantage", "Why [achievement] stands out"
+  * CURIOSITY WITH BOOKING ANGLE: "Before you book [genre] music", "The [style] booking secret", "What [venue type] needs to know", "The [performance type] truth"
+
+PERSONALIZATION REQUIREMENTS:
+- Extract specific venues, achievements, years of experience, genres, instruments, awards, etc. from info dump
+- Use THEIR specific credentials in subject lines, not generic placeholders
+- Create curiosity around THEIR unique story and accomplishments
+- Ensure subjects are relevant to booking while being irresistibly intriguing
+- Never use generic subjects - everything must be personalized to the individual artist
+
 - NEVER repeat the same subject structure twice - vary the psychology, wording, and approach dramatically
-- NEVER use generic subjects like: "Live Music Inquiry", "Booking Request", "Available for Gigs"
+- AVOID generic subjects like: "Live Music Inquiry", "Booking Request", "Available for Gigs", "Following up"
+- Each subject must create a "curiosity gap" about the artist that can ONLY be satisfied by reading the email
+- Test each subject by asking: "Does this make me curious about THIS specific artist's story?"
 
 The email body must:
 - MAXIMUM 1000 CHARACTERS for main pitch content - availability dates/lists are EXTRA and don't count toward limit
@@ -309,17 +328,46 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - Make every musician sound professional and polished regardless of input quality
 - FOLLOW-UP EMAIL VARIATION: Each follow-up email must be WILDLY different in wording, approach, and structure from previous emails while maintaining the core message and user's requested tone/style
 
-- FOLLOW-UP CONTENT REQUIREMENTS - PROVIDE NEW VALUE EACH TIME:
-  * Email #1: Focus on credentials/experience - "We've performed at [venues/events]"
-  * Email #2: Focus on audience engagement - "Our performances create [atmosphere/energy]"
-  * Email #3: Focus on logistics/professionalism - "We handle all setup/sound professionally"
-  * Email #4: Focus on repertoire/music style - "Our setlist includes [genre variety]"
-  * Email #5: Focus on testimonials/social proof - "Previous venues have said [feedback]"
+- DYNAMIC FOLLOW-UP CONTENT EXTRACTION - PERSONALIZED FOR EACH ARTIST:
+  CRITICAL: Before writing ANY follow-up emails, ANALYZE the artist's info dump and EXTRACT 4+ unique accolades/achievements to distribute across emails 2-5:
+  
+  STEP 1 - ACCOLADE EXTRACTION: Identify the artist's most compelling credentials from their info dump:
+  * Notable venues performed at (specific names, types, locations)
+  * Years of experience and career milestones
+  * Musical genres, instruments, or unique styles
+  * Awards, recognition, or media coverage
+  * Audience reactions, testimonials, or repeat bookings
+  * Technical skills, equipment, or professional setup
+  * Special performances, tours, or significant events
+  * Collaborations with other artists or industry professionals
+  * Educational background or musical training
+  * Unique selling points that differentiate them
+  
+  STEP 2 - STRATEGIC DISTRIBUTION: Assign specific extracted accolades to each email:
+  * Email #1: Focus on overall credentials/experience - use their strongest 1-2 credentials
+  * Email #2: Focus on ONE specific extracted accolade (venue, achievement, or experience)
+  * Email #3: Focus on DIFFERENT extracted accolade (technical skill, professionalism, or setup)
+  * Email #4: Focus on ANOTHER extracted accolade (repertoire, style, or musical approach)
+  * Email #5: Focus on FINAL extracted accolade (testimonials, social proof, or unique experience)
   * Email #6: Last chance urgency - "We're finalizing our calendar"
   * Email #7: Final goodbye - "We understand you're not interested"
-  * Each email should introduce NEW information, angles, or benefits not mentioned before
-  * Never repeat the same selling points or phrases from previous emails
-  * Provide fresh reasons why they should book in each follow-up`;
+  
+  STEP 3 - PERSONALIZED SUBJECT LINES: Create curiosity-driven subjects based on the SPECIFIC accolade being featured:
+  * Use their actual venue names, achievements, years of experience, genres, etc.
+  * Create intrigue around their unique story without revealing everything
+  * Make each subject relevant to booking while being irresistibly curious
+  
+  ANTI-REPETITION REQUIREMENTS:
+  * Each email (1-7) must focus on a COMPLETELY DIFFERENT extracted accolade from their info dump
+  * NO email should repeat selling points, credentials, or information from other emails in the sequence
+  * Each email must introduce a NEW reason why venues should book this artist
+  * Subject lines must be UNIQUE for each email - no similar structures or curiosity gaps
+  * Each email should feel like discovering a new aspect of the artist's value proposition
+  * Never use generic content - everything must be personalized to the individual artist
+  * Extract and use specific names, numbers, locations, achievements from their input
+  * Create unique email sequences that reflect each artist's individual story and credentials
+  * Ensure thousands of users get completely different email sequences based on their unique backgrounds
+  * Track used accolades to prevent reuse across the entire 7-email sequence`;
 
 module.exports = {
   DEFAULT_PORT,

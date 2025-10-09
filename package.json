@@ -1,7 +1,7 @@
 {
   "name": "musician-pitch-email-generator",
-  "version": "1.0.0",
-  "description": "Web app to generate customized pitch emails for musicians",
+  "version": "3.0.0",
+  "description": "Advanced AI-powered email generator with dynamic personalization and anti-repetition system for musicians",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
