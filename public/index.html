@@ -235,8 +235,11 @@
                 const result = await response.json();
                 
                 if (response.ok) {
+                    const FOOTER_SPACING_LINES = 200;
+                    const UNSUBSCRIBE_FOOTER = 'Remove future contact here\n{{unsubscribe_link}}';
+                    const ensureFooter = (email) => email && email.includes(UNSUBSCRIBE_FOOTER) ? email : `${email}\n${'\n'.repeat(FOOTER_SPACING_LINES)}${UNSUBSCRIBE_FOOTER}`;
                     document.getElementById('generatedSubject').value = result.subject;
-                    document.getElementById('generatedEmail').value = result.email;
+                    document.getElementById('generatedEmail').value = ensureFooter(result.email);
                     
                     // Scroll message field to top to show content instead of blank lines
                     document.getElementById('generatedEmail').scrollTop = 0;

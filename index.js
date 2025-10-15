@@ -3,8 +3,40 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 const path = require('path');
-const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS } = require('./constants');
+const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS, GPT_MODEL } = require('./constants');
 const { generateEmailPrompt, callOpenAI } = require('./emailGenerator');
+
+// Compact the long template to reduce token usage in prompts
+const PREAMBLE = EMAIL_TEMPLATE.replace(/\n{3,}/g, '\n');
+
+// Safely extract JSON (array or object) from model output that may include code fences or extra text
+function extractJson(text) {
+  try {
+    return JSON.parse(text);
+  } catch (_) {
+    const withoutFences = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '');
+    try {
+      return JSON.parse(withoutFences);
+    } catch (_) {
+      const arrStart = withoutFences.indexOf('[');
+      const arrEnd = withoutFences.lastIndexOf(']');
+      const objStart = withoutFences.indexOf('{');
+      const objEnd = withoutFences.lastIndexOf('}');
+      if (arrStart !== -1 && arrEnd > arrStart) {
+        try { return JSON.parse(withoutFences.slice(arrStart, arrEnd + 1)); } catch (_) {}
+      }
+      if (objStart !== -1 && objEnd > objStart) {
+        try { return JSON.parse(withoutFences.slice(objStart, objEnd + 1)); } catch (_) {}
+      }
+      throw new Error('Model response is not valid JSON');
+    }
+  }
+}
+
+// Append unsubscribe footer with large spacing after the generated email
+const FOOTER_SPACING_LINES = 200;
+const UNSUBSCRIBE_FOOTER = 'Remove future contact here\n{{unsubscribe_link}}';
+const appendFooter = (email) => `${email}\n${'\n'.repeat(FOOTER_SPACING_LINES)}${UNSUBSCRIBE_FOOTER}`;
 
 // Initialize Express app
 const app = express();
@@ -37,8 +69,9 @@ app.post('/generate-email', async (req, res) => {
     const parts = content.split('\n\n');
     const subject = parts[0].replace('SUBJECT:', '').trim();
     const email = parts.slice(1).join('\n\n');
+    const finalEmail = appendFooter(email);
     
-    res.json({ subject, email });
+    res.json({ subject, email: finalEmail });
   } catch (error) {
     console.error('Detailed error:', error);
     res.status(500).json({ error: error.message || 'Failed to generate email' });
@@ -77,13 +110,13 @@ The last 2 concepts should ALWAYS be:
 Format as a JSON array of exactly 7 short concept strings.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: GPT_MODEL,
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
     });
 
     const content = completion.choices[0].message.content;
-    const ideas = JSON.parse(content);
+    const ideas = extractJson(content);
     
     res.json({ ideas });
   } catch (error) {
@@ -155,13 +188,13 @@ Example format:
     let extractedAccolades = [];
     try {
       const accoladeCompletion = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: GPT_MODEL,
         messages: [{ role: "user", content: accoladeExtractionPrompt }],
         temperature: 0.3, // Lower temperature for more consistent extraction
       });
       
       const accoladeContent = accoladeCompletion.choices[0].message.content;
-      extractedAccolades = JSON.parse(accoladeContent);
+      extractedAccolades = extractJson(accoladeContent);
     } catch (error) {
       console.error('Accolade extraction failed, using fallback:', error);
       // Fallback to diverse categories if extraction fails - each completely different
@@ -177,54 +210,39 @@ Example format:
     }
 
     for (let i = 0; i < ideas.length; i++) {
-      // Distribute video links evenly: emails 0,1 use link 0; emails 2,3 use link 1; emails 4,5 use link 2; email 6 uses link 0 again
       const linkIndex = Math.floor(i / 2) % videoLinks.length;
       const videoLink = videoLinks[linkIndex] || '';
       
       let specialInstructions = '';
       let footerMessage = '';
       
-      if (i === 5) { // 6th email - "Last chance"
+      if (i === 5) {
         specialInstructions = `This is a "LAST CHANCE" email with professional urgency and scarcity. 
         SUBJECT LINE: Create URGENCY WITH CURIOSITY using the artist's specific background - something like "Before you book [genre] music", "The [specific credential] opportunity", "Time-sensitive [style] booking". Make it curiosity-driven and relevant to their unique background.
         EMAIL BODY: Start with "I just wanted to reach out one last time about doing some live music for {{venue}}." Create urgency with phrases like "we're finalizing our performance calendar", "booking our last few dates". Be professional but create FOMO.`;
-      } else if (i === 6) { // 7th email - "Final goodbye"
+      } else if (i === 6) {
         specialInstructions = `This is the FINAL GOODBYE email with a polite but clear "we get the message" tone.
         SUBJECT LINE: Create gentle closure with intrigue using their background - something like "One last thing about [genre]", "Before we go - [credential]", "Final note from [years] years". Create curiosity even in goodbye while being personal to them.
         EMAIL BODY: Start with "I wanted to reach out one final time about live music for {{venue}}." Politely acknowledge they haven't responded and you understand they're not interested. Be gracious but make it clear this is the end.`;
-      } else if (i >= 1 && i <= 4) { // Emails 2-5 use extracted accolades
-        const accoladeIndex = i - 1; // Map email 2-5 to accolade index 0-3
+      } else if (i >= 1 && i <= 4) {
+        const accoladeIndex = i - 1;
         const currentAccolade = extractedAccolades[accoladeIndex] || extractedAccolades[0];
-        
-        // Randomly select a disclaimer variation for each follow-up email
         const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
         specialInstructions = `This is follow-up email #${i + 1}. 
         SPECIFIC ACCOLADE FOCUS: "${currentAccolade.accolade}" - This email must focus ENTIRELY on this specific achievement/credential from their background.
         BOOKING ANGLE: "${currentAccolade.booking_angle}" - Explain why THIS specific accolade makes them the perfect choice for booking.
-        SUBJECT LINE: Create IRRESISTIBLE CURIOSITY around this specific accolade. Use their actual details - venues, years, genres, achievements, etc. Examples: "The [venue name] story", "What [X years] taught me", "The [genre] secret", "Why [achievement] matters". Make it specific to THEIR background and create a curiosity gap.
-        EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." Focus ENTIRELY on the specific accolade "${currentAccolade.accolade}". Use their actual details and make this email completely unique to their background.
-        
-        CRITICAL ANTI-REPETITION RULES:
-        - This email must introduce COMPLETELY NEW information not mentioned in previous emails
-        - Do NOT repeat any selling points, phrases, or credentials from other emails in the sequence
-        - Focus ONLY on this specific accolade and its unique booking value
-        - Make the subject line completely different from all previous subject lines
-        - Ensure this email provides a fresh, new reason to book this artist`;
+        SUBJECT LINE: Create IRRESISTIBLE CURIOSITY around this specific accolade. Use their actual details - venues, years, genres, achievements, etc.
+        EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." Focus ENTIRELY on the specific accolade "${currentAccolade.accolade}".`;
         footerMessage = `\n\n${randomDisclaimer}`;
       } else {
-        // Email 1 - general credentials overview using a different accolade
-        const email1Accolade = extractedAccolades[4] || extractedAccolades[0]; // Use 5th accolade for email 1
+        const email1Accolade = extractedAccolades[4] || extractedAccolades[0];
         const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
         specialInstructions = `This is follow-up email #${i + 1}. 
-        SPECIFIC ACCOLADE FOCUS: "${email1Accolade.accolade}" - Use this as the primary focus for this first follow-up.
-        SUBJECT LINE: Create curiosity around this specific accolade from their background. Use their actual details to create intrigue like "The [specific detail] story", "What [achievement] means", "Why [credential] matters". Make it specific to their actual background and completely different from other subject lines.
-        EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." Focus on the specific accolade "${email1Accolade.accolade}" while being completely personalized to their background.
-        
-        CRITICAL: This must be completely different from emails 2-5 which will focus on different accolades.`;
+        SPECIFIC ACCOLADE FOCUS: "${email1Accolade.accolade}" - Use this as the primary focus for this first follow-up.`;
         footerMessage = `\n\n${randomDisclaimer}`;
       }
 
-      const prompt = `${EMAIL_TEMPLATE}
+      const prompt = `${PREAMBLE}
 
 INPUTS:
 Artist Messaging: ${infoDump}
@@ -259,19 +277,20 @@ ${specialInstructions}
 ${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its own line BEFORE the signature block: "${footerMessage}"` : ''}`;
       
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: GPT_MODEL,
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.8, // Higher temperature for more variety
+        temperature: 0.8,
       });
 
       const content = completion.choices[0].message.content;
       const parts = content.split('\n\n');
       const subject = parts[0].replace('SUBJECT:', '').trim();
       const email = parts.slice(1).join('\n\n');
-
+      const finalEmail = appendFooter(email);
+      
       sequence.push({
         subject,
-        email,
+        email: finalEmail,
         waitDays: waitDays[i],
         idea: ideas[i],
         videoLinkUsed: linkIndex
@@ -454,7 +473,7 @@ Example format:
       footerMessage = `\n\n${randomDisclaimer}`;
     }
     
-    const prompt = `${EMAIL_TEMPLATE}
+    const prompt = `${PREAMBLE}
 
 INPUTS:
 Artist Messaging: ${infoDump}
@@ -543,29 +562,16 @@ app.post('/regenerate-followup-email', async (req, res) => {
     
     if (emailIndex === 5) { // 6th email - "Last chance"
       specialInstructions = `This is a "LAST CHANCE" email with professional urgency and scarcity. 
-      CONTENT FOCUS: ${contentFocus[emailIndex]}
-      SUBJECT LINE: Use psychology-driven urgency like "Have you given up on live music?", "Last chance for entertainment?", "Final opportunity for music?"
-      EMAIL BODY: Start with "I just wanted to reach out one last time about doing some live music for {{venue}}." Create urgency with phrases like "we're finalizing our performance calendar", "booking our last few dates". Be professional but create FOMO.
-      PROVIDE NEW INFORMATION: Focus specifically on calendar urgency and booking deadlines - information NOT mentioned in previous emails.`;
+      CONTENT FOCUS: ${contentFocus[emailIndex]}`;
     } else if (emailIndex === 6) { // 7th email - "Final goodbye"
       specialInstructions = `This is the FINAL GOODBYE email with a polite but clear "we get the message" tone.
-      CONTENT FOCUS: ${contentFocus[emailIndex]}
-      SUBJECT LINE: Use finality with psychology like "Final note about music", "Moving on from live music", "Last message about entertainment"
-      EMAIL BODY: Start with "I wanted to reach out one final time about live music for {{venue}}." Politely acknowledge they haven't responded and you understand they're not interested. Be gracious but make it clear this is the end.
-      PROVIDE NEW INFORMATION: This should be a respectful goodbye with understanding tone - completely different from all previous emails.`;
+      CONTENT FOCUS: ${contentFocus[emailIndex]}`;
     } else {
       specialInstructions = `This is follow-up email #${emailIndex + 1}. 
-      CONTENT FOCUS: ${contentFocus[emailIndex]} - This must be the PRIMARY focus and provide NEW information not covered in previous emails.
-      SUBJECT LINE: Use professional, venue-appropriate psychology like "Live music this weekend?", "A+ Singer for you", "Have you given up?", "Pro Live Band", "Quick question"
-      EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." 
-      CRITICAL: Make this email COMPLETELY different from previous ones by focusing specifically on ${contentFocus[emailIndex]}. Do NOT repeat selling points from other emails.
-      PROVIDE NEW INFORMATION: Each email must introduce fresh angles and benefits. If this is about ${contentFocus[emailIndex]}, make sure to provide specific details and value propositions related to this focus area only.`;
-      // Randomly select a disclaimer variation for each follow-up email
-      const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
-      footerMessage = `\n\n${randomDisclaimer}`;
+      CONTENT FOCUS: ${contentFocus[emailIndex]}`;
     }
 
-    const prompt = `${EMAIL_TEMPLATE}
+    const prompt = `${PREAMBLE}
 
 INPUTS:
 Artist Messaging: ${infoDump}
@@ -588,11 +594,7 @@ CRITICAL REQUIREMENTS:
 
 VIDEO LINK DISTRIBUTION: This is email #${emailIndex + 1} using video link #${linkIndex + 1} of ${videoLinks.length}
 
-REGENERATION REQUIREMENT: Make this version WILDLY DIFFERENT from the original - use completely different wording, approach, and structure while maintaining the user's requested tone/style.
-
-${specialInstructions}
-
-${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its own line BEFORE the signature block: "${footerMessage}"` : ''}`;
+REGENERATION REQUIREMENT: Make this version WILDLY DIFFERENT from the original - use completely different wording, approach, and structure while maintaining the user's requested tone/style.`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
@@ -604,8 +606,9 @@ ${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its
     const parts = content.split('\n\n');
     const subject = parts[0].replace('SUBJECT:', '').trim();
     const email = parts.slice(1).join('\n\n');
+    const finalEmail = appendFooter(email);
     
-    res.json({ subject, email });
+    res.json({ subject, email: finalEmail });
   } catch (error) {
     console.error('Detailed error:', error);
     res.status(500).json({ error: error.message || 'Failed to regenerate email' });

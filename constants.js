@@ -2,7 +2,7 @@
 const DEFAULT_PORT = 3000;
 
 // OpenAI configuration
-const GPT_MODEL = "gpt-4";
+const GPT_MODEL = "gpt-4o";
 const TEMPERATURE = 0.7;
 
 // Disclaimer variations for follow-up emails only (to avoid spam detection)
@@ -122,8 +122,9 @@ The email body must:
 - Present musician's experience and credentials in a logical, impressive order
 - Clean up any technical jargon or unclear descriptions
 - Make the musician sound professional and polished regardless of input quality
-- ALWAYS include the exact footer format with this EXACT spacing pattern:
-  * After the signature and contact info, add exactly 200 blank lines:
+- Footer handling:
+  * The backend will automatically append the unsubscribe footer after the model output
+  * After the signature and contact info, the app adds exactly 200 blank lines
 
 
 
@@ -280,9 +281,9 @@ The email body must:
 
 
 
-  * Then write exactly: "Remove future contact here"
-  * Then on the next line write exactly: "{{unsubscribe_link}}"
-  * This massive spacing hides the unsubscribe from normal viewing so emails look personal
+  * Then it adds exactly: "Remove future contact here"
+  * On the next line it adds exactly: "{{unsubscribe_link}}"
+  * This spacing hides the unsubscribe from normal viewing so emails look personal
 
 
 

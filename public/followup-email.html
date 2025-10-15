@@ -93,6 +93,12 @@
     </div>
 
     <script>
+        const FOOTER_SPACING_LINES = 200;
+        const UNSUBSCRIBE_FOOTER = 'Remove future contact here\n{{unsubscribe_link}}';
+        function ensureFooter(email) {
+            if (!email || email.includes(UNSUBSCRIBE_FOOTER)) return email;
+            return `${email}\n${'\n'.repeat(FOOTER_SPACING_LINES)}${UNSUBSCRIBE_FOOTER}`;
+        }
         let currentIndex = 0;
         let ideas = [];
         let followUpData = {};
@@ -122,7 +128,7 @@
             document.getElementById('fromName').value = approvedFromName;
             document.getElementById('waitDays').value = emailData.waitDays || 7;
             document.getElementById('emailSubject').value = emailData.subject || '';
-            document.getElementById('emailMessage').value = emailData.email || '';
+            document.getElementById('emailMessage').value = ensureFooter(emailData.email || '');
             
             // Scroll message field to top to show content instead of blank lines
             document.getElementById('emailMessage').scrollTop = 0;
@@ -161,8 +167,9 @@
                 
                 if (response.ok) {
                     // Update current email and reload
-                    sessionStorage.setItem('currentFollowUpEmail', JSON.stringify(result));
-                    loadCurrentEmail(result);
+                    const withFooter = { ...result, email: ensureFooter(result.email) };
+                    sessionStorage.setItem('currentFollowUpEmail', JSON.stringify(withFooter));
+                    loadCurrentEmail(withFooter);
                 } else {
                     alert('Failed to regenerate email: ' + result.error);
                 }
@@ -211,8 +218,9 @@
                 
                 if (response.ok) {
                     // Store and load the next email
-                    sessionStorage.setItem('currentFollowUpEmail', JSON.stringify(result));
-                    loadCurrentEmail(result);
+                    const withFooter = { ...result, email: ensureFooter(result.email) };
+                    sessionStorage.setItem('currentFollowUpEmail', JSON.stringify(withFooter));
+                    loadCurrentEmail(withFooter);
                 } else {
                     alert('Failed to generate next email: ' + result.error);
                 }

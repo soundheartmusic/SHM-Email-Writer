@@ -16,7 +16,10 @@ function generateEmailPrompt(userData) {
   // Extract music style/genre hints from infoDump for better subject line generation
   const musicKeywords = infoDump.toLowerCase().match(/(?:jazz|blues|rock|folk|classical|acoustic|pop|electronic|latin|country|indie|soul|r&b|hip.?hop|reggae|world|fusion)/g) || [];
   
-  return `${EMAIL_TEMPLATE}
+  // Compact the long template to reduce tokens
+  const compactEmailTemplate = EMAIL_TEMPLATE.replace(/\n{3,}/g, '\n');
+  
+  return `${compactEmailTemplate}
 
 INPUTS:
 Artist Messaging: ${infoDump}
@@ -26,189 +29,12 @@ Tone Style: ${emailStyle}
 Signature: ${signatureBlock}
 Availability: ${availability}
 
-Write a short, effective email in that artist's voice. After the signature, add this exact footer (including all blank lines):
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Remove future contact here
-
-{{unsubscribe_link}}`;
+Write a short, effective email in that artist's voice.
+
+CRITICAL LINK USAGE:
+- Naturally reference exactly ONE video link in the body with a short lead-in, e.g., "Check out how I sound here: ${videoLinks[0]}", "Quick listen: ${videoLinks[0]}", or "Here’s a recent clip: ${videoLinks[0]}".
+- Do not list all links; use only the single best link.
+- Place the link inline in a sentence (not on its own line unless it reads naturally).`;
 }
 
 /**
