@@ -302,39 +302,41 @@ app.post('/generate-single-followup', async (req, res) => {
     let specialInstructions = '';
     let footerMessage = '';
     
-    // DYNAMIC ACCOLADE EXTRACTION for single follow-up
+    // DYNAMIC ACCOLADE EXTRACTION for single follow-up - ENHANCED TO TARGET SPECIFIC TALKING POINT
     let extractedAccolade = null;
-    if (emailIndex >= 1 && emailIndex <= 4) { // Only for emails 2-5
-      const accoladeExtractionPrompt = `ANALYZE this artist's information and EXTRACT their most compelling, specific accolade/achievement for follow-up email #${emailIndex + 1}:
+    if (emailIndex >= 0 && emailIndex <= 4) { // For emails 1-5, extract accolades related to the specific talking point
+      const accoladeExtractionPrompt = `ANALYZE this artist's information and EXTRACT their most compelling, specific accolade/achievement that relates to the talking point "${idea}" for follow-up email #${emailIndex + 1}:
 
 ARTIST INFO: ${infoDump}
 
-CRITICAL: This accolade must be COMPLETELY DIFFERENT from what would be used in other emails in the sequence. Each email needs a UNIQUE reason to book this artist.
+TALKING POINT FOCUS: "${idea}"
+
+CRITICAL REQUIREMENTS:
+- Find information in the artist's background that DIRECTLY relates to "${idea}"
+- Extract specific details, names, numbers, venues, achievements that support this talking point
+- If "${idea}" mentions "radio spots" - look for radio play, airtime, stations, interviews
+- If "${idea}" mentions "festival appearances" - look for specific festivals, dates, locations
+- If "${idea}" mentions "quotes from ppl" - look for testimonials, reviews, feedback
+- If "${idea}" mentions music style/genre - look for specific genres, instruments, repertoire
+- Make the accolade SPECIFIC and COMPELLING with actual details from their background
 
 EMAIL MAPPING STRATEGY:
-- Email #2 (index 1): Focus on venue experience or performance history
-- Email #3 (index 2): Focus on audience impact or customer retention
-- Email #4 (index 3): Focus on technical reliability or professional setup
-- Email #5 (index 4): Focus on musical style, repertoire, or unique offerings
+- Email #1 (index 0): Use the talking point to find relevant credentials/experience
+- Email #2 (index 1): Focus on venue experience or performance history related to the talking point
+- Email #3 (index 2): Focus on audience impact or customer retention related to the talking point  
+- Email #4 (index 3): Focus on technical reliability or professional setup related to the talking point
+- Email #5 (index 4): Focus on musical style, repertoire, or unique offerings related to the talking point
 
-For EMAIL #${emailIndex + 1}, extract ONE specific accolade from these categories (choose the most relevant):
-- Notable venues performed at (specific names, types, locations)
-- Years of experience and career milestones  
-- Musical genres, instruments, or unique styles
-- Awards, recognition, or media coverage
-- Audience reactions, testimonials, or repeat bookings
-- Technical skills, equipment, or professional setup
-- Special performances, tours, or significant events
-- Collaborations with other artists or industry professionals
-- Educational background or musical training
-- Customer/audience impact stories
-- Professional reliability and business aspects
-- Repertoire breadth and adaptability
+SEARCH STRATEGY for "${idea}":
+1. Look for EXACT matches to the talking point concept in the artist info
+2. Find specific details, names, venues, years, achievements that support this topic
+3. Extract concrete evidence that proves their expertise in this area
+4. If no direct match, find the closest related achievement that supports the talking point
 
-RETURN exactly ONE specific, compelling accolade as a JSON object with "accolade", "category", and "booking_angle" fields.
+RETURN exactly ONE specific, compelling accolade that directly supports "${idea}" as a JSON object with "accolade", "category", and "booking_angle" fields.
 
 Example format:
-{"accolade": "Performed at Blue Note Jazz Club for 3 years", "category": "venue_experience", "booking_angle": "proven_venue_success"}`;
+{"accolade": "Featured on WXYZ Radio's Morning Show 3 times in 2024", "category": "radio_exposure", "booking_angle": "media_validated_talent"}`;
 
       try {
         const accoladeCompletion = await openai.chat.completions.create({
@@ -381,30 +383,72 @@ Example format:
       SUBJECT LINE: Create gentle closure with intrigue using their background - something like "One last thing about [genre]", "Before we go - [credential]", "Final note from [years] years". Create curiosity even in goodbye while being personal to them.
       EMAIL BODY: Start with "I wanted to reach out one final time about live music for {{venue}}." Politely acknowledge they haven't responded and you understand they're not interested. Be gracious but make it clear this is the end.
       PROVIDE NEW INFORMATION: This should be a respectful goodbye with understanding tone - completely different from all previous emails.`;
-    } else if (emailIndex >= 1 && emailIndex <= 4 && extractedAccolade) { // Emails 2-5 use extracted accolades
-      specialInstructions = `This is follow-up email #${emailIndex + 1}. 
-      SPECIFIC ACCOLADE FOCUS: "${extractedAccolade.accolade}" - This email must focus ENTIRELY on this specific achievement/credential from their background.
-      BOOKING ANGLE: "${extractedAccolade.booking_angle}" - Explain why THIS specific accolade makes them the perfect choice for booking.
-      SUBJECT LINE: Create IRRESISTIBLE CURIOSITY around this specific accolade. Use their actual details - venues, years, genres, achievements, etc. Examples: "The [venue name] story", "What [X years] taught me", "The [genre] secret", "Why [achievement] matters". Make it specific to THEIR background and create a curiosity gap.
-      EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." Focus ENTIRELY on the specific accolade "${extractedAccolade.accolade}". Use their actual details and make this email completely unique to their background.
+    } else if (emailIndex >= 0 && emailIndex <= 4 && extractedAccolade) { // Emails 1-5 use extracted accolades related to talking points
+      specialInstructions = `This is follow-up email #${emailIndex + 1} focused on the talking point: "${idea}"
+      
+      TALKING POINT FOCUS: "${idea}" - This email must focus ENTIRELY on this specific topic from the user's chosen talking points.
+      SPECIFIC ACCOLADE FOCUS: "${extractedAccolade.accolade}" - Use this specific achievement/credential that relates to "${idea}".
+      BOOKING ANGLE: "${extractedAccolade.booking_angle}" - Explain why THIS specific accolade related to "${idea}" makes them the perfect choice for booking.
+      
+      SUBJECT LINE CREATION:
+      - Create IRRESISTIBLE CURIOSITY specifically around "${idea}" and the related accolade
+      - Use their actual details from the info dump that relate to "${idea}"
+      - Examples for different talking points:
+        * If "${idea}" is about radio: "The radio story", "What WXYZ taught me", "The airplay secret"
+        * If "${idea}" is about festivals: "The [Festival Name] experience", "What festivals taught me"
+        * If "${idea}" is about quotes/testimonials: "What venues say", "The feedback story"
+        * If "${idea}" is about music style: "The [genre] advantage", "Why [style] works"
+      - Make it specific to THEIR background and the talking point "${idea}"
+      
+      EMAIL BODY REQUIREMENTS:
+      - Start with "I just wanted to reach out again about doing some live music for {{venue}}."
+      - Focus ENTIRELY on the talking point "${idea}" using the specific accolade "${extractedAccolade.accolade}"
+      - Pull specific details from their info dump that support "${idea}"
+      - Make this email completely unique to their background and this specific talking point
+      - If "${idea}" mentions radio spots, focus on their radio experience, stations, shows, interviews
+      - If "${idea}" mentions festivals, focus on specific festivals they've played, dates, audiences
+      - If "${idea}" mentions quotes, include actual testimonials or feedback from their background
+      - If "${idea}" mentions music style, focus on their specific genres, instruments, repertoire
       
       CRITICAL ANTI-REPETITION RULES:
-      - This email must introduce COMPLETELY NEW information not mentioned in previous emails
+      - This email must introduce COMPLETELY NEW information about "${idea}" not mentioned in previous emails
       - Do NOT repeat any selling points, phrases, or credentials from other emails in the sequence
-      - Focus ONLY on this specific accolade and its unique booking value
+      - Focus ONLY on "${idea}" and its unique booking value using their specific background details
       - Make the subject line completely different from all previous subject lines
-      - Ensure this email provides a fresh, new reason to book this artist
-      PROVIDE NEW INFORMATION: This email should introduce this specific accolade and explain why it makes them perfect for the venue.`;
+      - Ensure this email provides a fresh, new reason to book this artist based on "${idea}"
+      
+      PROVIDE NEW INFORMATION: This email should introduce the talking point "${idea}" with specific evidence from their background and explain why it makes them perfect for the venue.`;
       // Randomly select a disclaimer variation for each follow-up email
       const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
       footerMessage = `\n\n${randomDisclaimer}`;
     } else {
-      // Email 1 or fallback
-      specialInstructions = `This is follow-up email #${emailIndex + 1}. 
+      // Fallback for emails without extracted accolades - still focus on the talking point
+      specialInstructions = `This is follow-up email #${emailIndex + 1} focused on the talking point: "${idea}"
+      
+      TALKING POINT FOCUS: "${idea}" - This email must focus ENTIRELY on this specific topic from the user's chosen talking points.
       CONTENT FOCUS: ${contentFocus[emailIndex]} - This must be the PRIMARY focus and provide NEW information not covered in previous emails.
-      SUBJECT LINE: Create curiosity around their overall credentials and experience. Use specific details from their background to create intrigue like "The [genre] professional you need", "What [years] years brings", "[Venue type] veteran available". Make it specific to their actual background.
-      EMAIL BODY: Start with "I just wanted to reach out again about doing some live music for {{venue}}." Focus on their overall credentials and experience while being completely personalized to their background.
-      PROVIDE NEW INFORMATION: Each email must introduce fresh angles and benefits. Make sure to provide specific details and value propositions related to their unique background.`;
+      
+      SUBJECT LINE CREATION:
+      - Create curiosity specifically around the talking point "${idea}"
+      - Use specific details from their background that relate to "${idea}"
+      - Examples for different talking points:
+        * If "${idea}" is about radio: "The radio connection", "Your airplay opportunity"
+        * If "${idea}" is about festivals: "The festival experience", "What crowds taught me"
+        * If "${idea}" is about quotes/testimonials: "What people say", "The venue feedback"
+        * If "${idea}" is about music style: "The [genre] you need", "Why [style] works"
+      - Make it specific to their actual background and the talking point "${idea}"
+      
+      EMAIL BODY REQUIREMENTS:
+      - Start with "I just wanted to reach out again about doing some live music for {{venue}}."
+      - Focus ENTIRELY on the talking point "${idea}" using details from their info dump
+      - Pull specific information that supports "${idea}" from their background
+      - Make this email completely unique to their background and this specific talking point
+      - If "${idea}" mentions radio, focus on any radio-related experience or potential
+      - If "${idea}" mentions festivals, focus on festival experience or festival-style performance ability
+      - If "${idea}" mentions quotes, focus on testimonials, reviews, or feedback they've received
+      - If "${idea}" mentions music style, focus on their specific genres, instruments, or musical approach
+      
+      PROVIDE NEW INFORMATION: Each email must introduce fresh angles and benefits related to "${idea}". Make sure to provide specific details and value propositions from their unique background that support this talking point.`;
       // Randomly select a disclaimer variation for each follow-up email
       const randomDisclaimer = DISCLAIMER_VARIATIONS[Math.floor(Math.random() * DISCLAIMER_VARIATIONS.length)];
       footerMessage = `\n\n${randomDisclaimer}`;
@@ -421,15 +465,24 @@ Availability: Follow-up email - focus on booking discussion
 
 FOLLOW-UP FOCUS: ${idea}
 
+TALKING POINT MANDATE: This email must be ENTIRELY focused on the talking point "${idea}". Search the artist's info dump for specific details, achievements, experiences, or credentials that directly relate to "${idea}". Use ONLY information from their background that supports this specific talking point.
+
 CRITICAL REQUIREMENTS:
 1. Start with "Hi {{firstname}}" (NO COMMA EVER)
 2. FIRST PARAGRAPH ONLY: Use {{venue}} merge tag exactly once in the opening sentence
-3. Include 2-3 paragraphs of compelling content focused on the concept - make it WILDLY different from other emails
+3. Include 2-3 paragraphs of compelling content focused ENTIRELY on "${idea}" - make it WILDLY different from other emails
 4. Include the video link naturally in the content
-5. End with a strong call-to-action question
+5. End with a strong call-to-action question related to "${idea}"
 6. Add the opt-out message if required
 7. Include the signature and contact info
 8. Add the unsubscribe footer with proper spacing
+
+TALKING POINT EXAMPLES:
+- If "${idea}" = "radio spots" → Focus on radio play, stations, interviews, airtime from their background
+- If "${idea}" = "Past Festival Appearances" → Focus on specific festivals, dates, crowds from their background  
+- If "${idea}" = "quotes from ppl" → Focus on testimonials, reviews, feedback from their background
+- If "${idea}" = "the kind of music he plays" → Focus on genres, style, instruments from their background
+- If "${idea}" = "Zach's Genre Blend" → Focus on their unique musical style mixing from their background
 
 VIDEO LINK DISTRIBUTION: This is email #${emailIndex + 1} using video link #${linkIndex + 1} of ${videoLinks.length}
 

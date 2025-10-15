@@ -1,5 +1,56 @@
 # Musician Pitch Email Generator - Version History
 
+## Version 3.1.0 - Enhanced Talking Point Relevance System
+**Release Date:** October 15, 2025
+
+### 🎯 Major Enhancement: Talking Point-Focused Email Generation
+
+#### **Precise Talking Point Targeting**
+- Enhanced accolade extraction to specifically target user-defined talking points from ideas page
+- Each follow-up email now focuses ENTIRELY on the specific talking point entered by user
+- AI searches info dump for details that directly relate to each talking point
+- Subject lines create curiosity specifically around the talking point topic
+
+#### **Talking Point Examples**
+- **"radio spots"** → Searches for radio play, stations, interviews, airtime in info dump
+- **"Past Festival Appearances"** → Finds specific festivals, dates, crowds from background  
+- **"quotes from ppl"** → Looks for testimonials, reviews, feedback in info dump
+- **"the kind of music he plays"** → Focuses on genres, style, instruments from background
+- **"Zach's Genre Blend"** → Targets unique musical style mixing from info dump
+
+#### **Enhanced Email Generation Process**
+1. User enters talking point in follow-up ideas page (e.g., "radio spots")
+2. AI analyzes info dump for content specifically related to that talking point
+3. Extracts relevant accolades/achievements that support the talking point
+4. Creates subject line with curiosity around the specific talking point
+5. Generates email content focused ENTIRELY on that talking point using info dump details
+
+#### **Subject Line Improvements**
+- Creates irresistible curiosity specifically around each talking point
+- Uses actual details from info dump that relate to the talking point
+- Examples: "The WXYZ Radio story", "What festivals taught me", "The feedback story"
+- Each subject line is unique to the artist's background and the specific talking point
+
+#### **Content Personalization**
+- Email body focuses exclusively on the talking point using specific info dump details
+- Pulls concrete evidence from artist's background that supports the talking point
+- Ensures each email introduces completely new information related to its talking point
+- Maintains anti-repetition while staying laser-focused on the specific topic
+
+### 🔧 Technical Improvements
+- Enhanced accolade extraction prompts to target specific talking points
+- Updated email generation logic to prioritize talking point relevance
+- Improved subject line generation with talking point-specific examples
+- Added fallback systems for emails without extracted accolades
+
+### 📊 Impact
+- Each follow-up email now directly addresses the user's chosen talking points
+- Higher relevance between email content and user-defined topics
+- More personalized subject lines based on specific talking points
+- Stronger connection between info dump content and follow-up focus areas
+
+---
+
 ## Version 3.0.0 - Advanced Dynamic Personalization System
 **Release Date:** October 9, 2025
 
