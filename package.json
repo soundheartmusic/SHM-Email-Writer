@@ -1,7 +1,7 @@
 {
   "name": "musician-pitch-email-generator",
-  "version": "3.1.0",
-  "description": "Advanced AI-powered email generator with dynamic personalization and anti-repetition system for musicians",
+  "version": "4.0.0",
+  "description": "Advanced AI-powered email generator with name rotator, dynamic personalization and anti-repetition system for musicians",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

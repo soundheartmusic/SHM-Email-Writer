@@ -1,5 +1,59 @@
 # Musician Pitch Email Generator - Version History
 
+## Version 4.0.0 - Name Rotator & Miscellaneous Enhancements
+**Release Date:** October 18, 2025
+
+### 🎯 Major Features: v4.0_namerotator_misc
+
+#### **Advanced Name/Greeting Rotation System**
+- **Salutation Rotator** - 8 different greeting variations across email sequence
+- **Anti-Repetition Greetings** - Each email uses different opening (Hi, Hello, Hi there, Hey there, Hi again, Hello again, Greetings, Hey)
+- **Sequential Greeting Logic** - Automatic rotation based on email position in 8-email flow
+- **Professional Variation** - Prevents spam detection while maintaining professionalism
+
+#### **Miscellaneous System Enhancements**
+- **Enhanced Model Configuration** - Updated to GPT-4o for improved performance
+- **Refined Subject Line Limits** - Optimized to 2-5 words maximum for better open rates
+- **Improved Artist Type Detection** - Better recognition of DJs, rappers, singers, bands, instrumentalists
+- **Banned Phrase Prevention** - Explicit blocking of overused subject line patterns
+- **Footer Automation** - Streamlined unsubscribe footer handling
+
+#### **Technical Improvements**
+- **Greeting Index Mapping** - Smart function to map email position to correct greeting
+- **Template Integration** - Seamless greeting rotation built into all email generation endpoints
+- **Error Prevention** - Safeguards against comma placement after firstname in greetings
+- **Consistent Implementation** - Greeting rotation works across all email types (intro, follow-ups, regenerations)
+
+#### **Professional Standards Enhancement**
+- **Zero Comma Policy** - Strict enforcement of no commas after {{firstname}} in salutations
+- **Greeting Consistency** - All emails in sequence use different but professional greetings
+- **Anti-Spam Diversity** - Greeting variation contributes to overall email uniqueness
+- **Template Compliance** - All generation endpoints respect greeting rotation rules
+
+### 🔧 System Architecture
+- **GREETING_ROTATION Array** - 8 predefined professional greetings
+- **getGreetingForIndex() Function** - Maps email position to appropriate greeting
+- **Template Integration** - Greeting rotation embedded in all email generation prompts
+- **Automatic Application** - No manual intervention required for greeting selection
+
+### 📊 Greeting Sequence
+1. **Email 0 (Intro)**: "Hi {{firstname}}"
+2. **Email 1 (Follow-up 1)**: "Hello {{firstname}}"
+3. **Email 2 (Follow-up 2)**: "Hi there {{firstname}}"
+4. **Email 3 (Follow-up 3)**: "Hey there {{firstname}}"
+5. **Email 4 (Follow-up 4)**: "Hi again {{firstname}}"
+6. **Email 5 (Follow-up 5)**: "Hello again {{firstname}}"
+7. **Email 6 (Follow-up 6)**: "Greetings {{firstname}}"
+8. **Email 7 (Follow-up 7)**: "Hey {{firstname}}"
+
+### 🎵 Enhanced User Experience
+- **Professional Variety** - Each email feels fresh with different greeting
+- **Spam Prevention** - Greeting rotation helps avoid email filters
+- **Consistent Quality** - All greetings maintain professional tone
+- **Seamless Integration** - Works automatically with all existing features
+
+---
+
 ## Version 3.1.0 - Enhanced Talking Point Relevance System
 **Release Date:** October 15, 2025
 

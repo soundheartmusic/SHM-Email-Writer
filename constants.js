@@ -5,6 +5,18 @@ const DEFAULT_PORT = 3000;
 const GPT_MODEL = "gpt-4o";
 const TEMPERATURE = 0.7;
 
+// Greeting rotation (8 emails: 1 intro + 7 follow-ups)
+const GREETING_ROTATION = [
+  "Hi",
+  "Hello",
+  "Hi there",
+  "Hey there",
+  "Hi again",
+  "Hello again",
+  "Greetings",
+  "Hey"
+];
+
 // Disclaimer variations for follow-up emails only (to avoid spam detection)
 const DISCLAIMER_VARIATIONS = [
   "If it's not a good fit, just let me know, and I won't reach out again :)",
@@ -44,13 +56,15 @@ Generate a very short subject line and concise email body with MAXIMUM DIVERSITY
 CRITICAL TONE BALANCE: Always maintain an exceptionally polite and gracious foundation while seamlessly blending in the user's specified "Email Personality Style" from their input. The politeness should never be compromised, but should be expressed through their chosen personality style.
 
 The subject line must:
-- Be 2-6 words ONLY (expanded for more engaging options)
+- Be 2-5 words ONLY (max 5 words)
 - Start with "SUBJECT:"
+- Prefer subtle inquiry framing (questions or gentle prompts) that booking agents are likely to open; avoid salesy language
 - CRITICAL: Use WILDLY DIFFERENT approaches for each email to avoid spam detection across thousands of users worldwide
 - NEVER include merge tags in the subject line - keep them completely clean
 - CREATE IRRESISTIBLE CURIOSITY that makes recipients NEED to open the email
 - Each subject line must be DIRECTLY RELEVANT to that specific email's unique content focus
 - DYNAMICALLY EXTRACT from the artist's info dump to create personalized, curiosity-driven subjects
+- ADAPT TO ARTIST TYPE: Detect performer type from the info dump (e.g., DJ, rapper, singer, band, instrumentalist) and make the subject relevant to that role
 - Use psychological triggers that create urgency, curiosity, and emotional engagement while staying relevant to "awesome artist wants to play at your venue"
 
 DYNAMIC SUBJECT LINE GENERATION RULES:
@@ -58,14 +72,21 @@ DYNAMIC SUBJECT LINE GENERATION RULES:
 - CREATE CURIOSITY GAPS around their specific accomplishments without revealing everything
 - MATCH subject lines to the specific accolade/focus being discussed in that email
 - ENSURE each subject makes the recipient think "I need to know more about this artist"
+- DO NOT REPEAT subject lines across the entire session (intro + all follow-ups + regenerations) – every subject must be unique
+- BANNED EXACT PHRASES (do not use verbatim, only create distinct variations):
+  * "Have you given up on this?"
+  * "Live music this weekend?"
+  * "A++ Musician For you"
+  * "A++ Vocalist for you"
+  * "Your live music"
+  * "Upcoming live music?"
 
-Subject Line Categories (choose based on email content):
-  * CREDENTIAL TEASERS: "The [venue type] that changed everything", "What [X years] of performing taught me", "Why [notable venue] called back", "The [achievement] story"
-  * SOCIAL PROOF HINTS: "What happened after [specific performance]", "The [venue/event] response", "Why [genre] fans keep asking", "The [location] phenomenon"
-  * EXPERIENCE MYSTERIES: "The [number] show milestone", "What [specific venue type] owners notice", "The [genre] secret weapon", "Why [achievement] matters"
-  * GENRE/STYLE INTRIGUE: "The [specific genre] advantage", "What [instrument/style] really does", "The [musical approach] difference", "Why [style] works perfectly"
-  * ACHIEVEMENT HOOKS: "The [award/recognition] effect", "What [specific accomplishment] means", "The [credential] advantage", "Why [achievement] stands out"
-  * CURIOSITY WITH BOOKING ANGLE: "Before you book [genre] music", "The [style] booking secret", "What [venue type] needs to know", "The [performance type] truth"
+Subject Line Patterns that combine curiosity + booking value (choose one based on content):
+  * INQUIRY + RELEVANCE: "Live [genre] near you?", "Weekend [style] ideas?", "Open slots for [role]?"
+  * VALUE + CURIOSITY: "[role] that holds crowds", "Boost dwell time [genre]", "[style] that drives spend"
+  * SOCIAL PROOF HINT: "What [venue/event] noticed", "Why fans return", "The [city] response"
+  * ACHIEVEMENT HOOK: "From [tour/award] to you", "Grammy-featured [role] nearby", "Charted [genre] act"
+  * BOOKING ANGLE: "Before you book [genre]", "[style] that fits Fridays", "[role] for busy nights"
 
 PERSONALIZATION REQUIREMENTS:
 - Extract specific venues, achievements, years of experience, genres, instruments, awards, etc. from info dump
@@ -294,7 +315,16 @@ Then the email body.
 MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - CHARACTER LIMIT: The main email content (pitch/intro) must be 1000 characters or less - availability dates/info do NOT count toward this limit
 
-- SALUTATION RULE: Write EXACTLY "Hi {{firstname}}" - NO COMMA NO COMMA NO COMMA NO COMMA - NEVER EVER PUT A COMMA AFTER {{firstname}} - this prevents "Hi ," when firstname is blank - ZERO TOLERANCE FOR COMMAS IN SALUTATION - THE SALUTATION MUST END IMMEDIATELY AFTER {{firstname}} WITH NO PUNCTUATION WHATSOEVER
+- SALUTATION RULE: The salutation must be ONE of the following, followed by a space and {{firstname}} (NO COMMA EVER):
+  * "Hi {{firstname}}"
+  * "Hello {{firstname}}"
+  * "Hi there {{firstname}}"
+  * "Hey there {{firstname}}"
+  * "Hi again {{firstname}}"
+  * "Hello again {{firstname}}"
+  * "Greetings {{firstname}}"
+  * "Hey {{firstname}}"
+  ALWAYS rotate through the list across the 8-email flow (intro + 7 follow-ups). ZERO TOLERANCE FOR COMMAS OR EXTRA PUNCTUATION AFTER {{firstname}}.
 - BANNED WORDS: Never use "stage", "venue", or "at [location]" anywhere in the email
 - CRITICAL: {{venue}} can appear EXACTLY ONE TIME in the entire email - COUNT EVERY USAGE - if you use it once, DO NOT use it again anywhere else
 - VENUE PLACEMENT RULE: {{venue}} must ONLY be used in the FIRST PARAGRAPH - never in second or third paragraphs
@@ -311,7 +341,7 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
   * Example: "Watch our performance: https://youtu.be/example" NOT "[https://youtu.be/example](https://youtu.be/example)"
   * NEVER include the same video link twice in one email
   * Video links should be distributed evenly across the email sequence
-- The salutation must be EXACTLY: "Hi {{firstname}}" with ABSOLUTELY NO COMMA, NO PUNCTUATION after firstname (prevents "Hi ," when firstname is blank)
+- The salutation must be one of the GREETING ROTATION items above (no comma, no punctuation after firstname); choose the correct item for this email's position in the 8-email sequence
 - The email body can use the placeholder {{venue}} exactly once maximum in the first paragraph only, never in greeting or subsequent paragraphs
 
 - AVAILABILITY RULES - CRITICAL FOR PROFESSIONAL IMAGE:
@@ -375,5 +405,6 @@ module.exports = {
   GPT_MODEL,
   TEMPERATURE,
   EMAIL_TEMPLATE,
-  DISCLAIMER_VARIATIONS
+  DISCLAIMER_VARIATIONS,
+  GREETING_ROTATION
 };

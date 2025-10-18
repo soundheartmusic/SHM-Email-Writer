@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 const path = require('path');
-const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS, GPT_MODEL } = require('./constants');
+const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS, GPT_MODEL, GREETING_ROTATION } = require('./constants');
 const { generateEmailPrompt, callOpenAI } = require('./emailGenerator');
 
 // Compact the long template to reduce token usage in prompts
@@ -37,6 +37,12 @@ function extractJson(text) {
 const FOOTER_SPACING_LINES = 200;
 const UNSUBSCRIBE_FOOTER = 'Remove future contact here\n{{unsubscribe_link}}';
 const appendFooter = (email) => `${email}\n${'\n'.repeat(FOOTER_SPACING_LINES)}${UNSUBSCRIBE_FOOTER}`;
+
+// Map a 0-based email index across the 8-email flow to the correct greeting
+function getGreetingForIndex(emailIndex) {
+  const idx = Math.max(0, Math.min(GREETING_ROTATION.length - 1, emailIndex));
+  return GREETING_ROTATION[idx];
+}
 
 // Initialize Express app
 const app = express();
@@ -261,7 +267,7 @@ ANTI-REPETITION MANDATE:
 - Provide a fresh, new reason to book this artist that hasn't been mentioned before
 
 CRITICAL REQUIREMENTS:
-1. Start with "Hi {{firstname}}" (NO COMMA EVER)
+1. Greeting: Use exactly "${getGreetingForIndex(i + 1)} {{firstname}}" (NO COMMA EVER)
 2. FIRST PARAGRAPH ONLY: Use {{venue}} merge tag exactly once in the opening sentence
 3. Include 2-3 paragraphs of compelling content focused on the concept - make it WILDLY different from other emails
 4. Include the video link naturally in the content
@@ -484,10 +490,8 @@ Availability: Follow-up email - focus on booking discussion
 
 FOLLOW-UP FOCUS: ${idea}
 
-TALKING POINT MANDATE: This email must be ENTIRELY focused on the talking point "${idea}". Search the artist's info dump for specific details, achievements, experiences, or credentials that directly relate to "${idea}". Use ONLY information from their background that supports this specific talking point.
-
 CRITICAL REQUIREMENTS:
-1. Start with "Hi {{firstname}}" (NO COMMA EVER)
+1. Greeting: Use exactly "${getGreetingForIndex(emailIndex + 1)} {{firstname}}" (NO COMMA EVER)
 2. FIRST PARAGRAPH ONLY: Use {{venue}} merge tag exactly once in the opening sentence
 3. Include 2-3 paragraphs of compelling content focused ENTIRELY on "${idea}" - make it WILDLY different from other emails
 4. Include the video link naturally in the content
@@ -583,7 +587,7 @@ Availability: Follow-up email - focus on booking discussion
 FOLLOW-UP FOCUS: ${idea}
 
 CRITICAL REQUIREMENTS:
-1. Start with "Hi {{firstname}}" (NO COMMA EVER)
+1. Greeting: Use exactly "${getGreetingForIndex(emailIndex + 1)} {{firstname}}" (NO COMMA EVER)
 2. FIRST PARAGRAPH ONLY: Use {{venue}} merge tag exactly once in the opening sentence
 3. Include 2-3 paragraphs of compelling content focused on the concept - make it WILDLY different from other emails
 4. Include the video link naturally in the content
@@ -594,7 +598,7 @@ CRITICAL REQUIREMENTS:
 
 VIDEO LINK DISTRIBUTION: This is email #${emailIndex + 1} using video link #${linkIndex + 1} of ${videoLinks.length}
 
-REGENERATION REQUIREMENT: Make this version WILDLY DIFFERENT from the original - use completely different wording, approach, and structure while maintaining the user's requested tone/style.`;
+REGENERATION REQUIREMENT: Make this version WILDLY DIFFERENT from the original.`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
