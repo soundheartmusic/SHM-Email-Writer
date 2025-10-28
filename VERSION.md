@@ -1,5 +1,121 @@
 # Musician Pitch Email Generator - Version History
 
+## Version 5.0.0 - Intelligent Date Auto-Configuration System
+**Release Date:** October 28, 2025
+
+### 🎯 Major Features: v5.0_date-auto-config
+
+#### **Timezone-Aware Date Filtering System**
+- **Smart Date Intelligence** - Automatically filters availability dates based on when each follow-up email will be sent
+- **Timezone Detection** - Captures user's local date/time from browser automatically
+- **Date Parsing Engine** - Handles multiple formats: "November 9-26th", "Dec 1-15", "January 5-12"
+- **Auto-Expiration Handling** - Prevents showing expired dates in follow-up emails
+- **Professional Date Management** - Never shows dates that have already passed by email send time
+
+#### **Date Utility System (dateUtils.js)**
+- **Intelligent Date Parser** - Parses various natural date formats
+- **Range Filtering** - Filters date ranges based on follow-up send schedule (day 7, 14, 21, 31, 41, 51, 61)
+- **Auto-Adjustment** - Moves start dates forward if they've partially passed
+- **Year Rollover** - Automatically handles dates that span across years
+- **Validation Logic** - Returns filtered availability with validity status
+
+#### **Dynamic Availability Integration**
+- **Email-Specific Filtering** - Each follow-up shows only dates valid for its send date
+- **Smart Prompt Injection** - Conditionally includes/excludes dates in AI prompts
+- **Professional Framing** - "I have November 15-26 that could work well" when dates valid
+- **Graceful Degradation** - Only asks venue's dates when artist dates expired
+- **Context-Aware Messaging** - Adjusts email content based on date availability
+
+#### **Frontend Enhancements**
+- **Automatic Date Capture** - Browser captures user's current date/time via `new Date().toISOString()`
+- **Seamless Integration** - All form submissions include currentDate parameter
+- **Zero User Input Required** - Date/timezone handling is completely automatic
+- **Universal Compatibility** - Works across all timezones automatically
+
+#### **Backend Intelligence**
+- **All Endpoints Updated** - Initial email, follow-up sequence, and single follow-ups all date-aware
+- **Wait Days Calculation** - Accurately calculates when each email will be sent (7, 14, 21, 31, 41, 51, 61 days)
+- **Date Filtering Pipeline** - Every email generation filters dates before creating prompts
+- **Availability Instructions** - Dynamic prompt instructions based on filtered dates
+
+### 🔒 Subject Line Security Enhancements
+
+#### **Strengthened Merge Tag Ban**
+- **Multiple Enforcement Layers** - 4 separate reminders throughout prompt system
+- **Zero Tolerance Policy** - Explicit "NEVER EVER" language for {{venue}}, {{firstname}} in subjects
+- **Concrete Examples** - Shows correct vs wrong subject line examples
+- **Email Deliverability Focus** - Emphasizes merge tags break email systems
+- **Pattern Recognition** - Warns against all {{ }} bracket usage in subjects
+
+#### **Subject Line Examples Added**
+- ✅ **CORRECT**: "Flamenco guitarist nearby?", "Live jazz weekends?", "The Peninsula response"
+- ❌ **WRONG**: "Live music for {{venue}}", "{{firstname}}, quick question", "Flamenco for {{venue}}"
+
+### 📊 Date Filtering Examples
+
+**Scenario: Today is October 28, User enters "November 9-26th"**
+
+| Email # | Sends On | Wait Days | Date Shown | Status |
+|---------|----------|-----------|------------|--------|
+| Email 1 | Nov 4    | 7 days    | "November 9-26" | ✅ All dates valid |
+| Email 2 | Nov 11   | 14 days   | "November 11-26" | ✅ Adjusted start |
+| Email 3 | Nov 18   | 21 days   | "November 18-26" | ✅ Adjusted start |
+| Email 4 | Nov 28   | 31 days   | None shown | ❌ All expired |
+| Email 5 | Dec 8    | 41 days   | None shown | ❌ All expired |
+| Email 6 | Dec 18   | 51 days   | None shown | ❌ All expired |
+| Email 7 | Dec 28   | 61 days   | None shown | ❌ All expired |
+
+### 🔧 Technical Implementation
+
+#### **New File Structure**
+```
+dateUtils.js
+├── parseDateRanges()      - Parses natural language dates
+├── filterAvailabilityByDate() - Filters based on send date
+└── getWaitDays()          - Returns wait days for email index
+```
+
+#### **Updated Endpoints**
+- `/generate-email` - Now accepts currentDate parameter
+- `/generate-followup-sequence` - Filters dates for entire sequence
+- `/generate-single-followup` - Filters dates for individual emails
+- All endpoints inject date-specific instructions into prompts
+
+#### **Smart Prompt Injection**
+```javascript
+// If dates valid
+MANDATORY AVAILABILITY: Include "November 15-26" in email body
+
+// If dates expired  
+AVAILABILITY NOTE: Original dates have passed. Only ask venue's dates.
+```
+
+### 🎯 Key Benefits
+
+✅ **Professional Image** - Never shows expired dates to potential clients
+✅ **Zero Configuration** - Works automatically with user's timezone
+✅ **Smart Adjustment** - Dates automatically adjust as time passes
+✅ **Graceful Handling** - Smoothly transitions when all dates expire
+✅ **Global Compatibility** - Works for users in any timezone worldwide
+✅ **Email Integrity** - Subject lines guaranteed free of merge tags
+
+### 🚀 Impact
+
+- **Musicians look professional** - No embarrassing expired dates in emails
+- **Time-aware messaging** - Each email reflects current availability
+- **Automatic maintenance** - No manual date updating required
+- **Better deliverability** - Clean subject lines improve inbox placement
+- **Universal support** - Works globally across all timezones
+
+### 📋 Files Modified
+
+- **dateUtils.js** (NEW) - Core date filtering logic
+- **index.js** - All email generation endpoints updated
+- **public/index.html** - Captures and sends currentDate
+- **constants.js** - Strengthened subject line merge tag ban
+
+---
+
 ## Version 4.0.0 - Name Rotator & Miscellaneous Enhancements
 **Release Date:** October 18, 2025
 

@@ -58,9 +58,10 @@ CRITICAL TONE BALANCE: Always maintain an exceptionally polite and gracious foun
 The subject line must:
 - Be 2-5 words ONLY (max 5 words)
 - Start with "SUBJECT:"
+- ABSOLUTELY CRITICAL - ZERO TOLERANCE: NEVER EVER include ANY merge tags ({{venue}}, {{firstname}}, {{unsubscribe_link}}, etc.) in the subject line - subject lines must be 100% CLEAN text with NO placeholders or variables whatsoever
+- BANNED IN SUBJECT: {{venue}}, {{firstname}}, any {{ }} brackets, any merge tags - these cause email system errors
 - Prefer subtle inquiry framing (questions or gentle prompts) that booking agents are likely to open; avoid salesy language
 - CRITICAL: Use WILDLY DIFFERENT approaches for each email to avoid spam detection across thousands of users worldwide
-- NEVER include merge tags in the subject line - keep them completely clean
 - CREATE IRRESISTIBLE CURIOSITY that makes recipients NEED to open the email
 - Each subject line must be DIRECTLY RELEVANT to that specific email's unique content focus
 - DYNAMICALLY EXTRACT from the artist's info dump to create personalized, curiosity-driven subjects
@@ -82,11 +83,17 @@ DYNAMIC SUBJECT LINE GENERATION RULES:
   * "Upcoming live music?"
 
 Subject Line Patterns that combine curiosity + booking value (choose one based on content):
+  
+  WARNING: When using these patterns, replace [genre], [style], [role], etc. with actual text from the artist's info - NEVER use {{venue}} or {{firstname}} or any {{ }} merge tags!
+  
   * INQUIRY + RELEVANCE: "Live [genre] near you?", "Weekend [style] ideas?", "Open slots for [role]?"
   * VALUE + CURIOSITY: "[role] that holds crowds", "Boost dwell time [genre]", "[style] that drives spend"
   * SOCIAL PROOF HINT: "What [venue/event] noticed", "Why fans return", "The [city] response"
   * ACHIEVEMENT HOOK: "From [tour/award] to you", "Grammy-featured [role] nearby", "Charted [genre] act"
   * BOOKING ANGLE: "Before you book [genre]", "[style] that fits Fridays", "[role] for busy nights"
+  
+  EXAMPLES OF CORRECT SUBJECT LINES: "Flamenco guitarist nearby?", "Live jazz weekends?", "The Peninsula response"
+  EXAMPLES OF WRONG SUBJECT LINES: "Live music for {{venue}}", "{{firstname}}, quick question", "Flamenco for {{venue}}"
 
 PERSONALIZATION REQUIREMENTS:
 - Extract specific venues, achievements, years of experience, genres, instruments, awards, etc. from info dump
@@ -135,8 +142,8 @@ The email body must:
   * BANNED PHRASE: "at [location]" - use "for [location]" or rephrase completely
   * BANNED: Any comma, period, or punctuation after {{firstname}} in salutation - write "Hi {{firstname}}" ONLY - NO COMMA EVER AFTER FIRSTNAME
   * CRITICAL: The salutation "Hi {{firstname}}" must NEVER have a comma - it should be "Hi {{firstname}}" NOT "Hi {{firstname}},"
-  * BANNED PHRASES: "wide open", "completely available", "calendar is open", "we are available" - these make artists look unprofessional and not in demand
-  * BANNED: Mentioning artist availability - instead ask about VENUE's available dates
+  * BANNED PHRASES: "wide open", "completely available", "calendar is open", "we are available" (vague availability) - BUT specific dates ARE allowed and MUST be included when provided
+  * MANDATORY: If specific dates are provided by the user (e.g., "November 9-26th"), they MUST appear in the email - only vague availability is banned, not specific dates
   * BANNED: Duplicate video links - use each video link only ONCE per email, never repeat the same URL
 - Use phrases like "truly honored" and "deeply grateful", but switch it up
 - Extract and highlight the most compelling information from the raw input
@@ -309,10 +316,14 @@ The email body must:
 
 
 First output the subject line.
+CRITICAL REMINDER: The subject line must NEVER contain merge tags like {{venue}}, {{firstname}}, or any {{ }} brackets - use only plain text!
 Then a blank line.
 Then the email body.
 
 MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
+
+- SUBJECT LINE MERGE TAG BAN: The subject line must NEVER EVER contain {{venue}}, {{firstname}}, {{unsubscribe_link}}, or ANY merge tags with {{ }} brackets - subject lines are ALWAYS plain text only - this is critical for email deliverability
+
 - CHARACTER LIMIT: The main email content (pitch/intro) must be 1000 characters or less - availability dates/info do NOT count toward this limit
 
 - SALUTATION RULE: The salutation must be ONE of the following, followed by a space and {{firstname}} (NO COMMA EVER):
@@ -345,12 +356,14 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 - The email body can use the placeholder {{venue}} exactly once maximum in the first paragraph only, never in greeting or subsequent paragraphs
 
 - AVAILABILITY RULES - CRITICAL FOR PROFESSIONAL IMAGE:
-  * NEVER EVER say "we are wide open", "calendar is wide open", "completely available", or similar phrases - this makes the artist look unprofessional and not in demand
-  * NEVER mention the artist being "available" or "open" - this is a red flag to venues
-  * INSTEAD: Focus on what dates the VENUE has open - flip the frame to their availability
-  * If user input says "wide open" or similar, IGNORE IT and ask about venue's openings instead
-  * Use phrases like "What dates work best for your establishment?", "Which upcoming dates are you looking to fill?", "What performance slots do you have available?"
-  * If specific dates are provided, include them but frame as "These dates could work well" rather than "We're available on"
+  * MANDATORY: If the user provides specific dates (e.g., "November 9-26th", "December 1-15", specific date ranges), you MUST include them in the email body
+  * When including specific dates, frame them professionally: "I have November 9-26th that could work well for {{venue}}" or "These dates are open: November 9-26th"
+  * Place the availability dates AFTER the pitch content but BEFORE the signature/contact info
+  * NEVER EVER say "we are wide open", "calendar is wide open", "completely available", or similar vague phrases - this makes the artist look unprofessional and not in demand
+  * NEVER mention being generally "available" or "open" without specific dates - this is a red flag to venues
+  * If user input says "OPEN" or "wide open" with NO specific dates, IGNORE IT and ask about venue's openings instead
+  * Always end with a CTA asking about the venue's available dates: "What dates work best for your establishment?", "Which upcoming dates are you looking to fill?"
+  * SUMMARY: Specific dates provided by user = MUST include them + ask venue about their dates. No dates provided or "OPEN" = Only ask about venue's dates.
 - End with a STRONG, DIRECT call-to-action using a question format that demands a response (e.g., "Which dates work best for you?", "Can we lock in some performance dates?", "What upcoming dates are you looking to fill?")
 - Use phrases that show deep appreciation and respect
 - Always express genuine gratitude for their time and consideration

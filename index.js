@@ -5,6 +5,7 @@ const OpenAI = require('openai');
 const path = require('path');
 const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS, GPT_MODEL, GREETING_ROTATION } = require('./constants');
 const { generateEmailPrompt, callOpenAI } = require('./emailGenerator');
+const { filterAvailabilityByDate, getWaitDays } = require('./dateUtils');
 
 // Compact the long template to reduce token usage in prompts
 const PREAMBLE = EMAIL_TEMPLATE.replace(/\n{3,}/g, '\n');
@@ -137,7 +138,7 @@ Format as a JSON array of exactly 7 short concept strings.`;
  */
 app.post('/generate-followup-sequence', async (req, res) => {
   try {
-    const { infoDump, videoLinks, emailStyle, signatureBlock, ideas } = req.body;
+    const { infoDump, videoLinks, emailStyle, signatureBlock, ideas, currentDate, availability } = req.body;
     
     const sequence = [];
     const waitDays = [7, 14, 21, 31, 41, 51, 61]; // Wait days for each follow-up
@@ -216,6 +217,10 @@ Example format:
     }
 
     for (let i = 0; i < ideas.length; i++) {
+      // Filter availability dates for this specific email's send date
+      const daysUntilSend = waitDays[i];
+      const { hasValidDates, filteredAvailability } = filterAvailabilityByDate(availability, daysUntilSend, currentDate);
+      
       const linkIndex = Math.floor(i / 2) % videoLinks.length;
       const videoLink = videoLinks[linkIndex] || '';
       
@@ -248,6 +253,11 @@ Example format:
         footerMessage = `\n\n${randomDisclaimer}`;
       }
 
+      // Build availability instruction for this email
+      const availabilityInstruction = hasValidDates && filteredAvailability 
+        ? `MANDATORY AVAILABILITY: Include these specific dates in the email body (after pitch, before signature): "${filteredAvailability}". Frame professionally like "I have ${filteredAvailability} that could work well" or "These dates are available: ${filteredAvailability}".`
+        : `AVAILABILITY NOTE: Artist's original dates have passed by the time this email sends. Do NOT mention any specific dates. Only ask about venue's available dates.`;
+      
       const prompt = `${PREAMBLE}
 
 INPUTS:
@@ -258,6 +268,8 @@ Signature: ${signatureBlock}
 Availability: Follow-up email - focus on booking discussion
 
 FOLLOW-UP FOCUS: ${ideas[i]}
+
+${availabilityInstruction}
 
 ANTI-REPETITION MANDATE:
 - This email #${i + 1} must introduce COMPLETELY NEW information not used in any other email
@@ -316,9 +328,13 @@ ${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its
  */
 app.post('/generate-single-followup', async (req, res) => {
   try {
-    const { infoDump, videoLinks, emailStyle, signatureBlock, idea, emailIndex, fromName } = req.body;
+    const { infoDump, videoLinks, emailStyle, signatureBlock, idea, emailIndex, fromName, currentDate, availability } = req.body;
     
     const waitDays = [7, 14, 21, 31, 41, 51, 61];
+    
+    // Filter availability dates based on when this email will be sent
+    const daysUntilSend = waitDays[emailIndex] || 0;
+    const { hasValidDates, filteredAvailability } = filterAvailabilityByDate(availability, daysUntilSend, currentDate);
     
     // Distribute video links evenly: emails 0,1 use link 0; emails 2,3 use link 1; emails 4,5 use link 2; email 6 uses link 0 again
     const linkIndex = Math.floor(emailIndex / 2) % videoLinks.length;
@@ -479,6 +495,11 @@ Example format:
       footerMessage = `\n\n${randomDisclaimer}`;
     }
     
+    // Build availability instruction based on filtered dates
+    const availabilityInstruction = hasValidDates && filteredAvailability 
+      ? `MANDATORY AVAILABILITY: Include these specific dates in the email body (after pitch, before signature): "${filteredAvailability}". Frame professionally like "I have ${filteredAvailability} that could work well" or "These dates are available: ${filteredAvailability}".`
+      : `AVAILABILITY NOTE: Artist's original dates have passed by the time this email sends. Do NOT mention any specific dates. Only ask about venue's available dates.`;
+    
     const prompt = `${PREAMBLE}
 
 INPUTS:
@@ -489,6 +510,8 @@ Signature: ${signatureBlock}
 Availability: Follow-up email - focus on booking discussion
 
 FOLLOW-UP FOCUS: ${idea}
+
+${availabilityInstruction}
 
 CRITICAL REQUIREMENTS:
 1. Greeting: Use exactly "${getGreetingForIndex(emailIndex + 1)} {{firstname}}" (NO COMMA EVER)

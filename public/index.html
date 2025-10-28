@@ -220,7 +220,8 @@
                 videoLinks: videoLinks,
                 emailStyle: document.getElementById('emailStyle').value,
                 signatureBlock: document.getElementById('signature').value,
-                availability: document.getElementById('availability').value
+                availability: document.getElementById('availability').value,
+                currentDate: new Date().toISOString() // Capture user's current date/time
             };
 
             try {
@@ -283,6 +284,7 @@
                 emailStyle: document.getElementById('emailStyle').value,
                 signatureBlock: document.getElementById('signature').value,
                 availability: document.getElementById('availability').value,
+                currentDate: new Date().toISOString(), // Capture user's current date/time
                 approvedFromName: document.getElementById('fromName').value, // Pass the approved from name
                 introEmail: {
                     subject: document.getElementById('generatedSubject').value,
