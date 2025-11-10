@@ -1,16 +1,91 @@
+/**
+ * ============================================================================
+ * MUSICIAN PITCH EMAIL GENERATOR - MAIN SERVER FILE
+ * ============================================================================
+ * 
+ * Version: 5.0.0 (v5.0_date-auto-config)
+ * 
+ * OVERVIEW:
+ * This is the main Express server that powers the Musician Pitch Email Generator.
+ * It provides REST API endpoints for generating AI-powered personalized pitch emails
+ * for musicians to send to venues.
+ * 
+ * KEY FEATURES:
+ * - Initial pitch email generation
+ * - 7-email follow-up sequence generation
+ * - Intelligent date filtering (v5.0) - prevents expired dates in emails
+ * - Dynamic accolade extraction from artist info
+ * - Anti-repetition system across email sequence
+ * - Merge tag system ({{venue}}, {{firstname}}, {{unsubscribe_link}})
+ * - Video link distribution across emails
+ * - Greeting rotation (8 variations)
+ * 
+ * API ENDPOINTS:
+ * POST /generate-email              - Generate initial pitch email
+ * POST /generate-followup-ideas      - Generate 7 follow-up concept ideas
+ * POST /generate-followup-sequence  - Generate complete 7-email sequence
+ * POST /generate-single-followup     - Generate one follow-up email
+ * POST /regenerate-followup-email    - Regenerate a follow-up with variation
+ * GET  /                             - Serve main HTML page
+ * GET  /followup-ideas.html          - Serve follow-up ideas page
+ * GET  /followup-email.html          - Serve follow-up email review page
+ * 
+ * INTEGRATION POINTS:
+ * - Database: Currently stateless, add DB calls in endpoints as needed
+ * - Email Service: Replace merge tags and send via your ESP (SendGrid, etc.)
+ * - Authentication: Add auth middleware to endpoints for production
+ * 
+ * ENVIRONMENT VARIABLES:
+ * - OPENAI_API_KEY: Your OpenAI API key (required)
+ * - PORT: Server port (optional, defaults to 3000)
+ * 
+ * See README.md, DEVELOPER_GUIDE.md, and API_REFERENCE.md for more details.
+ * ============================================================================
+ */
+
+// Load environment variables from .env file
 require('dotenv').config();
+
+// Core dependencies
 const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
 const path = require('path');
+
+// Import constants and configuration
 const { DEFAULT_PORT, EMAIL_TEMPLATE, DISCLAIMER_VARIATIONS, GPT_MODEL, GREETING_ROTATION } = require('./constants');
+
+// Import email generation utilities
 const { generateEmailPrompt, callOpenAI } = require('./emailGenerator');
+
+// Import date filtering utilities (v5.0 feature)
 const { filterAvailabilityByDate, getWaitDays } = require('./dateUtils');
 
-// Compact the long template to reduce token usage in prompts
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Compact the EMAIL_TEMPLATE by reducing multiple newlines to single newlines.
+ * This reduces token usage when sending prompts to OpenAI while maintaining readability.
+ * The EMAIL_TEMPLATE is 400+ lines long, so this optimization is important.
+ */
 const PREAMBLE = EMAIL_TEMPLATE.replace(/\n{3,}/g, '\n');
 
-// Safely extract JSON (array or object) from model output that may include code fences or extra text
+/**
+ * Safely extract JSON from OpenAI response that may include markdown code fences or extra text.
+ * 
+ * The AI sometimes returns JSON wrapped in ```json``` code fences or with explanatory text.
+ * This function tries multiple strategies to extract valid JSON:
+ * 1. Try parsing directly
+ * 2. Remove code fences and try again
+ * 3. Find JSON array markers [ ] and extract
+ * 4. Find JSON object markers { } and extract
+ * 
+ * @param {string} text - Raw text from OpenAI response
+ * @returns {object|array} Parsed JSON object or array
+ * @throws {Error} If no valid JSON can be extracted
+ */
 function extractJson(text) {
   try {
     return JSON.parse(text);
@@ -34,51 +109,130 @@ function extractJson(text) {
   }
 }
 
-// Append unsubscribe footer with large spacing after the generated email
+/**
+ * Append unsubscribe footer to generated email with large spacing.
+ * 
+ * The 200 blank lines push the unsubscribe link far below the visible email content.
+ * This makes the email look more personal while still including the required unsubscribe option.
+ * 
+ * INTEGRATION POINT: Replace {{unsubscribe_link}} with actual unsubscribe URL before sending.
+ * 
+ * @param {string} email - The generated email body
+ * @returns {string} Email with unsubscribe footer appended
+ */
 const FOOTER_SPACING_LINES = 200;
 const UNSUBSCRIBE_FOOTER = 'Remove future contact here\n{{unsubscribe_link}}';
 const appendFooter = (email) => `${email}\n${'\n'.repeat(FOOTER_SPACING_LINES)}${UNSUBSCRIBE_FOOTER}`;
 
-// Map a 0-based email index across the 8-email flow to the correct greeting
+/**
+ * Map email index (0-7) to the appropriate greeting from GREETING_ROTATION.
+ * 
+ * The system rotates through 8 different greetings across the email sequence:
+ * - Email 0 (Initial): "Hi"
+ * - Email 1 (Follow-up 1): "Hello"
+ * - Email 2 (Follow-up 2): "Hi there"
+ * - Email 3 (Follow-up 3): "Hey there"
+ * - Email 4 (Follow-up 4): "Hi again"
+ * - Email 5 (Follow-up 5): "Hello again"
+ * - Email 6 (Follow-up 6): "Greetings"
+ * - Email 7 (Follow-up 7): "Hey"
+ * 
+ * This variation helps avoid spam detection and keeps emails feeling fresh.
+ * 
+ * @param {number} emailIndex - Index of email in sequence (0-7)
+ * @returns {string} Greeting string (e.g., "Hi", "Hello", "Hi there")
+ */
 function getGreetingForIndex(emailIndex) {
   const idx = Math.max(0, Math.min(GREETING_ROTATION.length - 1, emailIndex));
   return GREETING_ROTATION[idx];
 }
 
-// Initialize Express app
+// ============================================================================
+// SERVER INITIALIZATION
+// ============================================================================
+
+// Initialize Express application
 const app = express();
 const port = process.env.PORT || DEFAULT_PORT;
 
-// Initialize OpenAI with API key from environment variables
+// Initialize OpenAI client with API key from environment variables
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// Log API key status on startup (helpful for debugging)
 console.log('API Key:', process.env.OPENAI_API_KEY ? 'Found' : 'Not found');
 
-// Middleware
+// ============================================================================
+// MIDDLEWARE
+// ============================================================================
+
+// Enable CORS for cross-origin requests
 app.use(cors());
+
+// Parse JSON request bodies
 app.use(express.json());
+
+// Serve static files from public/ directory (HTML, CSS, JS)
 app.use(express.static('public'));
 
+// ============================================================================
+// API ENDPOINTS
+// ============================================================================
+
 /**
- * Email generation endpoint
- * @route POST /generate-email
+ * ENDPOINT: Generate Initial Pitch Email
+ * 
+ * POST /generate-email
+ * 
+ * Generates the first pitch email that musicians send to venues.
+ * 
+ * REQUEST BODY:
+ * {
+ *   infoDump: string        - Detailed musician info (background, experience, style, etc.)
+ *   videoLinks: string[]    - 1-3 performance video URLs
+ *   emailStyle: string      - Desired tone (e.g., "Professional", "Casual")
+ *   signatureBlock: string  - Contact info (name, phone, email, website)
+ *   availability: string    - Availability dates (e.g., "November 9-26th", "OPEN")
+ *   currentDate?: string    - ISO date string for date filtering (v5.0)
+ * }
+ * 
+ * RESPONSE:
+ * {
+ *   subject: string  - Generated subject line (2-5 words, NO merge tags)
+ *   email: string    - Complete email body with merge tags and unsubscribe footer
+ * }
+ * 
+ * INTEGRATION POINTS:
+ * - Add database call here to save generated email
+ * - Add authentication middleware for production
+ * - Replace merge tags before sending via email service
+ * 
+ * See API_REFERENCE.md for complete documentation.
  */
 app.post('/generate-email', async (req, res) => {
   try {
+    // Step 1: Build AI prompt using helper function from emailGenerator.js
     const prompt = generateEmailPrompt(req.body);
+    
+    // Step 2: Call OpenAI API (can take 5-15 seconds)
     console.log('Sending request to OpenAI...');
     const completion = await callOpenAI(openai, prompt);
     const content = completion.choices[0].message.content;
     
-    // Extract subject line and email body
+    // Step 3: Parse response to extract subject line and email body
+    // AI returns format: "SUBJECT: ..." followed by blank line and email body
     const parts = content.split('\n\n');
     const subject = parts[0].replace('SUBJECT:', '').trim();
     const email = parts.slice(1).join('\n\n');
+    
+    // Step 4: Add unsubscribe footer with 200 blank lines
     const finalEmail = appendFooter(email);
     
+    // Step 5: Return generated email
+    // INTEGRATION: Save to database here if needed
     res.json({ subject, email: finalEmail });
+    
   } catch (error) {
     console.error('Detailed error:', error);
     res.status(500).json({ error: error.message || 'Failed to generate email' });
@@ -86,8 +240,40 @@ app.post('/generate-email', async (req, res) => {
 });
 
 /**
- * Generate follow-up email ideas
- * @route POST /generate-followup-ideas
+ * ENDPOINT: Generate Follow-Up Ideas
+ * 
+ * POST /generate-followup-ideas
+ * 
+ * Generates 7 follow-up email concept ideas based on the musician's information.
+ * These are short 2-4 word phrases that become the talking point for each follow-up.
+ * 
+ * REQUEST BODY:
+ * {
+ *   infoDump: string  - Musician's detailed information
+ * }
+ * 
+ * RESPONSE:
+ * {
+ *   ideas: string[]  - Array of 7 concept phrases
+ * }
+ * 
+ * EXAMPLES OF GENERATED IDEAS:
+ * - "Past Festival Appearances"
+ * - "Radio spots"
+ * - "Quotes from venue owners"
+ * - "Musical versatility"
+ * - "Technical setup expertise"
+ * - "Last chance for live music"  (always 6th)
+ * - "Final goodbye"               (always 7th)
+ * 
+ * The AI analyzes the infoDump and extracts 5 unique concepts based on the
+ * artist's actual background. The last 2 are always "Last chance" and "Final goodbye".
+ * 
+ * INTEGRATION POINTS:
+ * - User can edit these ideas in the frontend before generating follow-ups
+ * - These ideas are passed to /generate-followup-sequence or /generate-single-followup
+ * 
+ * See API_REFERENCE.md for complete documentation.
  */
 app.post('/generate-followup-ideas', async (req, res) => {
   try {

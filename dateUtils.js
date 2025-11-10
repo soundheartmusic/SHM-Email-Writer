@@ -1,12 +1,56 @@
 /**
- * Date utility functions for handling availability date filtering
+ * ============================================================================
+ * DATE UTILITIES - INTELLIGENT DATE FILTERING SYSTEM (v5.0)
+ * ============================================================================
+ * 
+ * This module provides date parsing and filtering functions to ensure
+ * availability dates in follow-up emails are always current and valid.
+ * 
+ * KEY FEATURES:
+ * - Parses natural language dates (e.g., "November 9-26th", "Dec 1-15")
+ * - Filters dates based on when each follow-up email will be sent
+ * - Automatically adjusts date ranges when start dates have passed
+ * - Handles year rollovers (dates in past assume next year)
+ * - Returns validity status for smart email content adjustment
+ * 
+ * PROBLEM IT SOLVES:
+ * Musicians enter availability like "November 9-26th" on October 28.
+ * Follow-up emails are sent on day 7, 14, 21, 31, 41, 51, 61.
+ * By day 31 (November 28), those dates have expired - showing them
+ * would be unprofessional. This module filters them automatically.
+ * 
+ * INTEGRATION:
+ * Used in index.js endpoints to filter dates before building AI prompts.
+ * 
+ * See README.md and DEVELOPER_GUIDE.md for more details.
+ * ============================================================================
  */
 
 /**
- * Parse date strings like "November 9-26th", "Dec 1-15", "January 5-12"
- * @param {string} dateStr - The date string to parse
- * @param {number} currentYear - The year to use for parsing
- * @returns {Array<{start: Date, end: Date}>} Array of date ranges
+ * Parse date strings in natural language format into Date objects.
+ * 
+ * SUPPORTED FORMATS:
+ * - "November 9-26th" - Full month name with date range
+ * - "Nov 9-26" - Abbreviated month with date range
+ * - "December 5" - Single date
+ * - "Dec 5th" - Single date with ordinal suffix
+ * 
+ * BEHAVIOR:
+ * - Uses provided currentYear for date construction
+ * - If parsed date is in the past, assumes next year
+ * - Handles both date ranges (9-26) and single dates (5)
+ * - Returns empty array if date string can't be parsed
+ * 
+ * EXAMPLES:
+ * parseDateRanges("November 9-26th", 2025) 
+ * // => [{ start: Date(2025-11-09), end: Date(2025-11-26) }]
+ * 
+ * parseDateRanges("Dec 1-15", 2025)
+ * // => [{ start: Date(2025-12-01), end: Date(2025-12-15) }]
+ * 
+ * @param {string} dateStr - The date string to parse (e.g., "November 9-26th")
+ * @param {number} currentYear - The year to use for parsing (e.g., 2025)
+ * @returns {Array<{start: Date, end: Date}>} Array of date range objects
  */
 function parseDateRanges(dateStr, currentYear) {
   if (!dateStr || typeof dateStr !== 'string') {
@@ -80,10 +124,46 @@ function parseDateRanges(dateStr, currentYear) {
 }
 
 /**
- * Filter availability dates based on when the email will be sent
- * @param {string} availability - The availability string from user input
- * @param {number} daysFromNow - How many days from now the email will be sent
- * @param {string} userCurrentDate - ISO string of user's current date
+ * Filter availability dates based on when the email will be sent.
+ * 
+ * This is the MAIN FUNCTION of this module - called by all email generation endpoints.
+ * 
+ * WHAT IT DOES:
+ * 1. Calculates when the email will actually be sent (current date + daysFromNow)
+ * 2. Parses the user's availability string into date ranges
+ * 3. Filters out dates that will have passed by the time email is sent
+ * 4. Adjusts start dates that are before email send date
+ * 5. Returns validity status and filtered availability string
+ * 
+ * FOLLOW-UP SCHEDULE:
+ * - Email 1: daysFromNow = 7   (sends 7 days after initial email)
+ * - Email 2: daysFromNow = 14  (sends 14 days after initial email)
+ * - Email 3: daysFromNow = 21
+ * - Email 4: daysFromNow = 31
+ * - Email 5: daysFromNow = 41
+ * - Email 6: daysFromNow = 51
+ * - Email 7: daysFromNow = 61
+ * 
+ * EXAMPLE SCENARIO:
+ * User enters: "November 9-26th" on October 28
+ * 
+ * Email 1 (day 7, Nov 4):   Returns "November 9-26"  ✅ All dates valid
+ * Email 2 (day 14, Nov 11):  Returns "November 11-26" ✅ Adjusted start
+ * Email 3 (day 21, Nov 18):  Returns "November 18-26" ✅ Adjusted start
+ * Email 4 (day 31, Nov 28):  Returns ""               ❌ All dates expired
+ * 
+ * RETURN VALUE:
+ * {
+ *   hasValidDates: boolean     - true if any dates still valid, false if all expired
+ *   filteredAvailability: string  - Reconstructed date string or empty string
+ * }
+ * 
+ * When hasValidDates = false, the AI prompt is adjusted to NOT mention artist dates,
+ * only ask about venue's available dates.
+ * 
+ * @param {string} availability - The availability string from user input (e.g., "November 9-26th")
+ * @param {number} daysFromNow - How many days from now the email will be sent (7, 14, 21, etc.)
+ * @param {string} userCurrentDate - ISO 8601 date string of user's current date/time
  * @returns {Object} { hasValidDates: boolean, filteredAvailability: string }
  */
 function filterAvailabilityByDate(availability, daysFromNow, userCurrentDate) {

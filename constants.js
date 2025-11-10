@@ -1,11 +1,87 @@
-// Server configuration
+/**
+ * ============================================================================
+ * CONSTANTS & CONFIGURATION - EMAIL GENERATION TEMPLATES & SETTINGS
+ * ============================================================================
+ * 
+ * This file contains all configuration constants and the master EMAIL_TEMPLATE.
+ * 
+ * CONTENTS:
+ * 1. Server Configuration (port, API settings)
+ * 2. OpenAI Configuration (model, temperature)
+ * 3. Greeting Rotation (8 greeting variations for email sequence)
+ * 4. Disclaimer Variations (18 variations for follow-up emails)
+ * 5. EMAIL_TEMPLATE (400+ line master AI prompt with all rules)
+ * 
+ * EMAIL_TEMPLATE STRUCTURE:
+ * The EMAIL_TEMPLATE is the "brain" of the system - a 400+ line prompt that
+ * instructs the AI how to write emails. It includes:
+ * 
+ * - Tone and style guidelines
+ * - Subject line rules (2-5 words, NO merge tags, curiosity-driven)
+ * - Email body structure rules
+ * - Merge tag usage ({{venue}}, {{firstname}}, {{unsubscribe_link}})
+ * - Anti-repetition mandates
+ * - Availability rules (v5.0 date filtering support)
+ * - Banned words and phrases
+ * - Greeting rotation rules
+ * - Follow-up email specific instructions
+ * - Dynamic accolade extraction instructions
+ * 
+ * CUSTOMIZATION:
+ * To customize email output:
+ * - Adjust TEMPERATURE (0.0-1.0, higher = more creative)
+ * - Modify EMAIL_TEMPLATE to change AI behavior
+ * - Add new GREETING_ROTATION variations
+ * - Add new DISCLAIMER_VARIATIONS
+ * 
+ * IMPORTANT:
+ * Changes to EMAIL_TEMPLATE directly affect AI-generated content.
+ * Test thoroughly after any modifications.
+ * 
+ * See README.md and DEVELOPER_GUIDE.md for integration details.
+ * ============================================================================
+ */
+
+// ============================================================================
+// SERVER CONFIGURATION
+// ============================================================================
+
+// Default port for Express server (can be overridden by PORT environment variable)
 const DEFAULT_PORT = 3000;
 
-// OpenAI configuration
+// ============================================================================
+// OPENAI API CONFIGURATION
+// ============================================================================
+
+// AI model to use for email generation
+// Options: "gpt-4o" (recommended), "gpt-4", "gpt-3.5-turbo"
 const GPT_MODEL = "gpt-4o";
+
+// Temperature controls creativity/randomness of AI responses
+// 0.0 = very focused and deterministic
+// 1.0 = highly creative and varied
+// 0.7 = balanced (recommended for email generation)
 const TEMPERATURE = 0.7;
 
-// Greeting rotation (8 emails: 1 intro + 7 follow-ups)
+// ============================================================================
+// GREETING ROTATION (v4.0 Feature)
+// ============================================================================
+
+/**
+ * 8 different greeting variations used across the email sequence.
+ * 
+ * Email 0 (Initial): "Hi"
+ * Email 1 (Follow-up 1): "Hello"
+ * Email 2 (Follow-up 2): "Hi there"
+ * Email 3 (Follow-up 3): "Hey there"
+ * Email 4 (Follow-up 4): "Hi again"
+ * Email 5 (Follow-up 5): "Hello again"
+ * Email 6 (Follow-up 6): "Greetings"
+ * Email 7 (Follow-up 7): "Hey"
+ * 
+ * This variation helps avoid spam detection and keeps emails feeling fresh.
+ * Always followed by " {{firstname}}" with NO COMMA.
+ */
 const GREETING_ROTATION = [
   "Hi",
   "Hello",
@@ -17,7 +93,28 @@ const GREETING_ROTATION = [
   "Hey"
 ];
 
-// Disclaimer variations for follow-up emails only (to avoid spam detection)
+// ============================================================================
+// DISCLAIMER VARIATIONS (Anti-Spam Feature)
+// ============================================================================
+
+/**
+ * 18 variations of "opt-out" disclaimers for follow-up emails.
+ * 
+ * These are randomly selected and added to follow-up emails 1-5 (not on
+ * initial email or last 2 follow-ups).
+ * 
+ * PURPOSE:
+ * - Gives recipients an easy way to opt-out
+ * - Varies wording to avoid spam detection
+ * - Maintains friendly, professional tone
+ * 
+ * PLACEMENT:
+ * Added before the signature block in follow-up emails.
+ * 
+ * INTEGRATION POINT:
+ * In production, these should trigger actual unsubscribe functionality
+ * if the recipient replies with "not interested" or similar.
+ */
 const DISCLAIMER_VARIATIONS = [
   "If it's not a good fit, just let me know, and I won't reach out again :)",
   "If this isn't what you're looking for, just let me know and I won't bother you again :)",
@@ -39,7 +136,41 @@ const DISCLAIMER_VARIATIONS = [
   "If it doesn't feel right, totally fine! Just give me a shout and I'll leave you alone :)"
 ];
 
-// Email template
+// ============================================================================
+// MASTER EMAIL TEMPLATE - THE "BRAIN" OF THE SYSTEM
+// ============================================================================
+
+/**
+ * This is the master AI prompt template that controls ALL email generation.
+ * 
+ * This 400+ line prompt is the most important part of the system. It contains:
+ * - All rules for subject line generation
+ * - All rules for email body structure
+ * - Merge tag usage instructions
+ * - Anti-repetition mandates
+ * - Availability handling (v5.0 date filtering)
+ * - Subject line merge tag ban (v5.0 enhanced)
+ * - Greeting rotation rules
+ * - Follow-up specific instructions
+ * - Dynamic accolade extraction instructions
+ * 
+ * CUSTOMIZATION:
+ * Modify this template to change how the AI generates emails.
+ * Be careful - small changes can have big impacts on output quality.
+ * Always test thoroughly after modifications.
+ * 
+ * STRUCTURE:
+ * 1. Introduction and role definition
+ * 2. Input handling instructions
+ * 3. Subject line rules (CRITICAL - includes merge tag ban)
+ * 4. Email body rules
+ * 5. Merge tag usage guidelines
+ * 6. Availability rules (v5.0 integration)
+ * 7. Anti-repetition mandates
+ * 8. Follow-up specific instructions
+ * 
+ * See DEVELOPER_GUIDE.md for customization examples.
+ */
 const EMAIL_TEMPLATE = `You are a helpful AI writing expert who crafts exceptionally polite and gracious booking pitch emails for musicians to get booked at establishments that host live music.
 
 CRITICAL: The user input may be messy, disorganized, contain typos, or be poorly structured. It is your job to:
