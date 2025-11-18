@@ -309,7 +309,7 @@
                     sessionStorage.setItem('followUpIdeas', JSON.stringify(result.ideas));
                     // Save the approved from name for follow-up emails
                     sessionStorage.setItem('approvedFromName', document.getElementById('fromName').value);
-                    window.location.href = '/followup-ideas.html';
+                    window.location.href = '/ai/followup-ideas.html';
                 } else {
                     alert('Failed to generate follow-up ideas: ' + result.error);
                 }

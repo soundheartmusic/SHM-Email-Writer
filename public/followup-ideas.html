@@ -120,7 +120,7 @@
                     sessionStorage.setItem('currentFollowUpIndex', '0');
                     sessionStorage.setItem('currentFollowUpEmail', JSON.stringify(result));
                     sessionStorage.setItem('approvedFromName', result.fromName);
-                    window.location.href = '/followup-email.html';
+                    window.location.href = '/ai/followup-email.html';
                 } else {
                     alert('Failed to generate follow-up email: ' + result.error);
                 }
