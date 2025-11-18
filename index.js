@@ -210,7 +210,7 @@ app.use(express.static('public'));
  * 
  * See API_REFERENCE.md for complete documentation.
  */
-app.post('/generate-email', async (req, res) => {
+app.post('/ai/generate-email', async (req, res) => {
   try {
     // Step 1: Build AI prompt using helper function from emailGenerator.js
     const prompt = generateEmailPrompt(req.body);
@@ -275,7 +275,7 @@ app.post('/generate-email', async (req, res) => {
  * 
  * See API_REFERENCE.md for complete documentation.
  */
-app.post('/generate-followup-ideas', async (req, res) => {
+app.post('/ai/generate-followup-ideas', async (req, res) => {
   try {
     const { infoDump } = req.body;
     
@@ -322,7 +322,7 @@ Format as a JSON array of exactly 7 short concept strings.`;
  * Generate complete follow-up email sequence
  * @route POST /generate-followup-sequence
  */
-app.post('/generate-followup-sequence', async (req, res) => {
+app.post('/ai/generate-followup-sequence', async (req, res) => {
   try {
     const { infoDump, videoLinks, emailStyle, signatureBlock, ideas, currentDate, availability } = req.body;
     
@@ -512,7 +512,7 @@ ${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its
  * Generate single follow-up email (one by one approach)
  * @route POST /generate-single-followup
  */
-app.post('/generate-single-followup', async (req, res) => {
+app.post('/ai/generate-single-followup', async (req, res) => {
   try {
     const { infoDump, videoLinks, emailStyle, signatureBlock, idea, emailIndex, fromName, currentDate, availability } = req.body;
     
@@ -751,7 +751,7 @@ ${footerMessage ? `MANDATORY DISCLAIMER PLACEMENT: Add this exact message on its
  * Regenerate a single follow-up email
  * @route POST /regenerate-followup-email
  */
-app.post('/regenerate-followup-email', async (req, res) => {
+app.post('/ai/regenerate-followup-email', async (req, res) => {
   try {
     const { infoDump, videoLinks, emailStyle, signatureBlock, idea, emailIndex } = req.body;
     
@@ -831,11 +831,11 @@ REGENERATION REQUIREMENT: Make this version WILDLY DIFFERENT from the original.`
 /**
  * Serve static files and specific routes
  */
-app.get('/followup-ideas.html', (req, res) => {
+app.get('/ai/followup-ideas.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'followup-ideas.html'));
 });
 
-app.get('/followup-email.html', (req, res) => {
+app.get('/ai/followup-email.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'followup-email.html'));
 });
 
@@ -843,7 +843,7 @@ app.get('/followup-email.html', (req, res) => {
  * Serve the main application page
  * @route GET /
  */
-app.get('/', (req, res) => {
+app.get('/ai/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
