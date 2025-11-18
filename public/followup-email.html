@@ -233,56 +233,76 @@
     </script>
 
     <script>
-    // Check authentication when page loads
+    // Authentication check
     async function checkAuth() {
         try {
-            const response = await fetch('/api/check-auth', {
+            const response = await fetch('https://roboticbookingagent.com/api/check-auth', {
                 credentials: 'include'
             });
             
             if (!response.ok) {
-                // Not authenticated, redirect to login
-                const currentUrl = encodeURIComponent(window.location.href);
-                window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+                // Not authenticated, redirect to login with ONLY the path
+                const currentPath = window.location.pathname; // This gives '/ai/' or '/ai/followup-ideas.html'
+                window.location.href = `https://roboticbookingagent.com/login?next=${encodeURIComponent(currentPath)}`;
                 return false;
             }
             return true;
         } catch (error) {
             console.error('Auth check failed:', error);
-            const currentUrl = encodeURIComponent(window.location.href);
-            window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+            const currentPath = window.location.pathname;
+            window.location.href = `https://roboticbookingagent.com/login?next=${encodeURIComponent(currentPath)}`;
             return false;
         }
     }
 
-    // Check auth on page load
-    checkAuth();
+    // Check auth when page loads
+    document.addEventListener('DOMContentLoaded', async function() {
+        const isAuthenticated = await checkAuth();
+        if (isAuthenticated) {
+            // Remove loading indicator and show content
+            const loadingEl = document.getElementById('authLoading');
+            if (loadingEl) {
+                loadingEl.remove();
+            }
+            document.body.style.display = 'block';
+            
+            // Initialize your AI app here
+            initializeAIApp();
+        }
+    });
 
-    // Add auth check to all API calls
-    function createAuthFetch() {
-        return async (url, options = {}) => {
-            const isAuthenticated = await checkAuth();
-            if (!isAuthenticated) {
-                throw new Error('Authentication required');
+    // Add loading indicator
+    document.write(`
+        <style>
+            #authLoading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                font-family: Arial, sans-serif;
             }
-            
-            const response = await fetch(url, {
-                ...options,
-                credentials: 'include'
-            });
-            
-            if (response.status === 401) {
-                const currentUrl = encodeURIComponent(window.location.href);
-                window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
-                throw new Error('Authentication required');
+            body {
+                display: none;
             }
-            
-            return response;
-        };
+        </style>
+        <div id="authLoading">
+            <div style="text-align: center;">
+                <h2>Checking authentication...</h2>
+                <p>Please wait while we verify your access.</p>
+            </div>
+        </div>
+    `);
+
+    function initializeAIApp() {
+        // Your existing app initialization code here
+        console.log('AI App initialized');
     }
-
-    // Use this for all your API calls
-    const authFetch = createAuthFetch();
-    </script>
+</script>
 </body>
 </html>
