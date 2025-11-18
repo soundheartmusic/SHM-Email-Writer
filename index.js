@@ -280,21 +280,10 @@ function serveProtectedPage(req, res, next) {
                         return;
                     }
                     
-                    // User is authenticated, load the actual page
-                    loadActualContent();
                 } catch (error) {
                     console.error('Auth check failed:', error);
                     const currentUrl = encodeURIComponent(window.location.href);
                     window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
-                }
-            }
-
-            function loadActualContent() {
-                // Redirect to the actual page (this will be handled by your static file serving)
-                if (window.location.pathname === '/ai/') {
-                    window.location.href = '/ai/';
-                } else {
-                    window.location.reload();
                 }
             }
 
