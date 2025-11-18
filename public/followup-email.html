@@ -117,7 +117,7 @@
             if (currentIndex >= 7) {
                 // All emails completed
                 alert('All follow-up emails completed!');
-                window.location.href = '/ai/';
+                window.location.href = '/myworkflow';
                 return;
             }
 
@@ -190,7 +190,8 @@
             sessionStorage.setItem('currentFollowUpIndex', currentIndex.toString());
             
             if (currentIndex >= 7) {
-                window.close();
+                alert('Follow-up sequence completed! All 7 emails are ready.');
+                window.location.href = '/myworkflow'
                 return;
             }
 
