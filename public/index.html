@@ -373,5 +373,57 @@
             }
         });
     </script>
+    <script>
+    // Check authentication when page loads
+    async function checkAuth() {
+        try {
+            const response = await fetch('/api/check-auth', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                // Not authenticated, redirect to login
+                const currentUrl = encodeURIComponent(window.location.href);
+                window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error('Auth check failed:', error);
+            const currentUrl = encodeURIComponent(window.location.href);
+            window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+            return false;
+        }
+    }
+
+    // Check auth on page load
+    checkAuth();
+
+    // Add auth check to all API calls
+    function createAuthFetch() {
+        return async (url, options = {}) => {
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) {
+                throw new Error('Authentication required');
+            }
+            
+            const response = await fetch(url, {
+                ...options,
+                credentials: 'include'
+            });
+            
+            if (response.status === 401) {
+                const currentUrl = encodeURIComponent(window.location.href);
+                window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+                throw new Error('Authentication required');
+            }
+            
+            return response;
+        };
+    }
+
+    // Use this for all your API calls
+    const authFetch = createAuthFetch();
+    </script>
 </body>
 </html> 

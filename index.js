@@ -210,6 +210,117 @@ app.use(express.static('public'));
  * 
  * See API_REFERENCE.md for complete documentation.
  */
+app.use('/ai', async (req, res, next) => {
+    // Skip auth check for static files, health checks, and specific endpoints
+    if (req.path.includes('.css') || 
+        req.path.includes('.js') || 
+        req.path.includes('.png') || 
+        req.path === '/health' ||
+        req.path === '/generate-email' ||
+        req.path === '/generate-followup-ideas' ||
+        req.path === '/generate-followup-sequence' ||
+        req.path === '/generate-single-followup' ||
+        req.path === '/regenerate-followup-email') {
+        return next();
+    }
+
+    // For HTML pages, serve them with client-side redirection logic
+    if (req.path === '/' || req.path === '/followup-ideas.html' || req.path === '/followup-email.html') {
+        return serveProtectedPage(req, res, next);
+    }
+
+    // For API endpoints, check authentication
+    try {
+        // Check with Flask if user is authenticated
+        const authResponse = await fetch('https://roboticbookingagent.com/api/check-auth', {
+            headers: {
+                Cookie: req.headers.cookie || '', // Pass cookies for session
+                'User-Agent': req.headers['user-agent']
+            }
+        });
+
+        if (authResponse.ok) {
+            // User is authenticated, proceed
+            next();
+        } else {
+            // User not authenticated, return 401
+            res.status(401).json({ 
+                error: 'Authentication required',
+                redirect: 'https://roboticbookingagent.com/login'
+            });
+        }
+    } catch (error) {
+        console.error('Auth check failed:', error);
+        res.status(401).json({ 
+            error: 'Authentication required',
+            redirect: 'https://roboticbookingagent.com/login'
+        });
+    }
+});
+
+// Function to serve HTML pages with client-side redirection
+function serveProtectedPage(req, res, next) {
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>AI Email Generator</title>
+        <script>
+            // Check authentication on client side
+            async function checkAuth() {
+                try {
+                    const response = await fetch('/api/check-auth', {
+                        credentials: 'include' // Include cookies
+                    });
+                    
+                    if (!response.ok) {
+                        // Not authenticated, redirect to login
+                        const currentUrl = encodeURIComponent(window.location.href);
+                        window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+                        return;
+                    }
+                    
+                    // User is authenticated, load the actual page
+                    loadActualContent();
+                } catch (error) {
+                    console.error('Auth check failed:', error);
+                    const currentUrl = encodeURIComponent(window.location.href);
+                    window.location.href = 'https://roboticbookingagent.com/login?next=' + currentUrl;
+                }
+            }
+
+            function loadActualContent() {
+                // Redirect to the actual page (this will be handled by your static file serving)
+                if (window.location.pathname === '/ai/') {
+                    window.location.href = '/ai/index.html';
+                } else {
+                    window.location.reload();
+                }
+            }
+
+            // Check authentication when page loads
+            document.addEventListener('DOMContentLoaded', checkAuth);
+        </script>
+        <style>
+            .loading {
+                text-align: center;
+                padding: 50px;
+                font-family: Arial, sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="loading">
+            <h2>Checking authentication...</h2>
+            <p>Please wait while we verify your access.</p>
+        </div>
+    </body>
+    </html>
+    `;
+    
+    res.send(html);
+}
+
 app.post('/ai/generate-email', async (req, res) => {
   try {
     // Step 1: Build AI prompt using helper function from emailGenerator.js
