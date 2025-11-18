@@ -292,7 +292,7 @@ function serveProtectedPage(req, res, next) {
             function loadActualContent() {
                 // Redirect to the actual page (this will be handled by your static file serving)
                 if (window.location.pathname === '/ai/') {
-                    window.location.href = '/ai/index.html';
+                    window.location.href = '/ai/';
                 } else {
                     window.location.reload();
                 }
