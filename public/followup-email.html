@@ -150,7 +150,7 @@
             const approvedFromName = sessionStorage.getItem('approvedFromName');
 
             try {
-                const response = await fetch('/generate-single-followup', {
+                const response = await fetch('/ai/generate-single-followup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -201,7 +201,7 @@
             loading.querySelector('p').textContent = `Generating follow-up email #${currentIndex + 1}...`;
 
             try {
-                const response = await fetch('/generate-single-followup', {
+                const response = await fetch('/ai/generate-single-followup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -99,7 +99,7 @@
             
             try {
                 // Generate only the first follow-up email (index 0)
-                const response = await fetch('/generate-single-followup', {
+                const response = await fetch('/ai/generate-single-followup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
