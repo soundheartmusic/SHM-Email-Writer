@@ -188,6 +188,25 @@
             // Move to next email
             currentIndex++;
             sessionStorage.setItem('currentFollowUpIndex', currentIndex.toString());
+
+            const formData = {
+                followupEmail: {
+                    'action-name': document.getElementById('actionName').value,
+                    fromname: document.getElementById('fromName').value,
+                    'wait-days': document.getElementById('waitDays').value,
+                    message: document.getElementById('generatedEmail').value,
+                    tempid: localStorage.getItem('tempid'),
+                    subject: document.getElementById('generatedSubject').value,
+                }
+            };
+
+            const response = await fetch('/api/action/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData.followupEmail)
+            });
             
             if (currentIndex >= 7) {
                 alert('Follow-up sequence completed! All 7 emails are ready.');

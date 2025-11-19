@@ -287,10 +287,23 @@
                 currentDate: new Date().toISOString(), // Capture user's current date/time
                 approvedFromName: document.getElementById('fromName').value, // Pass the approved from name
                 introEmail: {
+                    'action-name': document.getElementById('actionName').value,
+                    fromname: document.getElementById('fromName').value,
+                    'wait-days': document.getElementById('waitDays').value,
+                    message: document.getElementById('generatedEmail').value,
+                    tempid: localStorage.getItem('tempid'),
                     subject: document.getElementById('generatedSubject').value,
                     body: document.getElementById('generatedEmail').value
                 }
             };
+
+            const response = await fetch('/api/action/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData.introEmail)
+            });
 
             try {
                 const response = await fetch('/ai/generate-followup-ideas', {
