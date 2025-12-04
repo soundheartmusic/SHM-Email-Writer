@@ -271,10 +271,18 @@ The email body must:
   * BANNED WORD: "venue" - use "establishment" instead
   * BANNED WORD: "stage" - use "perform", "play", "entertain" instead (many places don't have stages)
   * BANNED PHRASE: "at [location]" - use "for [location]" or rephrase completely
-  * BANNED: Any comma, period, or punctuation after {{firstname}} in salutation - write "Hi {{firstname}}" ONLY - NO COMMA EVER AFTER FIRSTNAME
-  * CRITICAL: The salutation "Hi {{firstname}}" must NEVER have a comma - it should be "Hi {{firstname}}" NOT "Hi {{firstname}},"
+  * **CRITICAL SALUTATION RULE - NO EXCEPTIONS:** The salutation must be EXACTLY one of these formats with NO COMMA after {{firstname}}:
+    * "Hi {{firstname}}"
+    * "Hello {{firstname}}"
+    * "Hi there {{firstname}}"
+    * "Hey there {{firstname}}"
+    * "Hi again {{firstname}}"
+    * "Hello again {{firstname}}"
+    * "Greetings {{firstname}}"
+    * "Hey {{firstname}}"
+  * **ABSOLUTELY NO COMMA AFTER {{firstname}} - THIS IS NON-NEGOTIABLE**
   * BANNED PHRASES: "wide open", "completely available", "calendar is open", "we are available" (vague availability) - BUT specific dates ARE allowed and MUST be included when provided
-  * MANDATORY: If specific dates are provided by the user (e.g., "November 9-26th"), they MUST appear in the email - only vague availability is banned, not specific dates
+  * MANDATORY: If specific dates are provided by the user (e.g., "November 9-26th", "December 1-15", specific date ranges), they MUST appear in the email - only vague availability is banned, not specific dates
   * BANNED: Duplicate video links - use each video link only ONCE per email, never repeat the same URL
 - Use phrases like "truly honored" and "deeply grateful", but switch it up
 - Extract and highlight the most compelling information from the raw input
@@ -453,20 +461,25 @@ Then the email body.
 
 MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
 
+**SALUTATION FORMAT - NON-NEGOTIABLE:**
+The salutation must be EXACTLY ONE of these formats:
+- "Hi {{firstname}}"
+- "Hello {{firstname}}"
+- "Hi there {{firstname}}"
+- "Hey there {{firstname}}"
+- "Hi again {{firstname}}"
+- "Hello again {{firstname}}"
+- "Greetings {{firstname}}"
+- "Hey {{firstname}}"
+
+**ABSOLUTELY NO COMMA AFTER {{firstname}} - NEVER. EVER.**
+Examples of CORRECT format: "Hi {{firstname}}" then space and start your message
+Examples of WRONG format: "Hi {{firstname}}," or "Hello {{firstname}}:" or any punctuation after {{firstname}}
+
 - SUBJECT LINE MERGE TAG BAN: The subject line must NEVER EVER contain {{venue}}, {{firstname}}, {{unsubscribe_link}}, or ANY merge tags with {{ }} brackets - subject lines are ALWAYS plain text only - this is critical for email deliverability
 
 - CHARACTER LIMIT: The main email content (pitch/intro) must be 1000 characters or less - availability dates/info do NOT count toward this limit
 
-- SALUTATION RULE: The salutation must be ONE of the following, followed by a space and {{firstname}} (NO COMMA EVER):
-  * "Hi {{firstname}}"
-  * "Hello {{firstname}}"
-  * "Hi there {{firstname}}"
-  * "Hey there {{firstname}}"
-  * "Hi again {{firstname}}"
-  * "Hello again {{firstname}}"
-  * "Greetings {{firstname}}"
-  * "Hey {{firstname}}"
-  ALWAYS rotate through the list across the 8-email flow (intro + 7 follow-ups). ZERO TOLERANCE FOR COMMAS OR EXTRA PUNCTUATION AFTER {{firstname}}.
 - BANNED WORDS: Never use "stage", "venue", or "at [location]" anywhere in the email
 - CRITICAL: {{venue}} can appear EXACTLY ONE TIME in the entire email - COUNT EVERY USAGE - if you use it once, DO NOT use it again anywhere else
 - VENUE PLACEMENT RULE: {{venue}} must ONLY be used in the FIRST PARAGRAPH - never in second or third paragraphs
@@ -483,7 +496,6 @@ MANDATORY RULES - NO EXCEPTIONS - ZERO TOLERANCE:
   * Example: "Watch our performance: https://youtu.be/example" NOT "[https://youtu.be/example](https://youtu.be/example)"
   * NEVER include the same video link twice in one email
   * Video links should be distributed evenly across the email sequence
-- The salutation must be one of the GREETING ROTATION items above (no comma, no punctuation after firstname); choose the correct item for this email's position in the 8-email sequence
 - The email body can use the placeholder {{venue}} exactly once maximum in the first paragraph only, never in greeting or subsequent paragraphs
 
 - AVAILABILITY RULES - CRITICAL FOR PROFESSIONAL IMAGE:
