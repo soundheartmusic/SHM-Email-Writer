@@ -489,11 +489,15 @@ Examples of WRONG format: "Hi {{firstname}}," or "Hello {{firstname}}:" or any p
 - EXTRACT KEY POINTS: Identify the most compelling information and present it clearly
 - IMPROVE PRESENTATION: Fix grammar, structure, and flow while maintaining authenticity
 - Keep the email brief and polite but prioritize CONCISENESS over excessive politeness
-- VIDEO LINK FORMATTING RULES:
+- **VIDEO LINK FORMATTING RULES - UPDATED FOR PLAIN TEXT:**
   * Use only ONE of the provided video links at a time / 1 max per email
   * NEVER duplicate video links or show the same link multiple times
-  * Format video links as clean, single clickable links: just the URL, no brackets, no duplicates
-  * Example: "Watch our performance: https://youtu.be/example" NOT "[https://youtu.be/example](https://youtu.be/example)"
+  * **Format video links as clean, plain text URLs ONLY - no markdown, no brackets, no special formatting**
+  * **Example CORRECT format: "Watch our performance: https://youtu.be/example"**
+  * **Example CORRECT format: "https://www.youtube.com/watch?v=example"**
+  * **Example WRONG format: "[https://youtu.be/example](https://youtu.be/example)"**
+  * **Example WRONG format: "here (https://www.youtube.com/watch?v=example)"**
+  * **Example WRONG format: "you can enjoy [here](https://www.youtube.com/watch?v=example)"**
   * NEVER include the same video link twice in one email
   * Video links should be distributed evenly across the email sequence
 - The email body can use the placeholder {{venue}} exactly once maximum in the first paragraph only, never in greeting or subsequent paragraphs
