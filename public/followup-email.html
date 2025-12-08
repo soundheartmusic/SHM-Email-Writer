@@ -194,7 +194,7 @@
                     'action-name': document.getElementById('actionName').value,
                     fromname: document.getElementById('fromName').value,
                     'wait-days': document.getElementById('waitDays').value,
-                    message: document.getElementById('emailMessage').value,
+                    message: '<pre>' + document.getElementById('emailMessage').value + '</pre>',
                     tempid: localStorage.getItem('tempid'),
                     subject: document.getElementById('emailSubject').value,
                 }

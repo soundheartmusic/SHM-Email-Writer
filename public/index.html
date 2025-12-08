@@ -290,7 +290,7 @@
                     'action-name': document.getElementById('actionName').value,
                     fromname: document.getElementById('fromName').value,
                     'wait-days': document.getElementById('waitDays').value,
-                    message: document.getElementById('generatedEmail').value,
+                    message: '<pre>' + document.getElementById('generatedEmail').value + '</pre>',
                     tempid: localStorage.getItem('tempid'),
                     subject: document.getElementById('generatedSubject').value,
                     body: document.getElementById('generatedEmail').value
