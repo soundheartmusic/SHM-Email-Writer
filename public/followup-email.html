@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soundheart Music - Follow-Up Email</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <style>
         .soundheart-red {
             background-color: #dc2626;
@@ -14,6 +15,12 @@
         }
         .soundheart-bg {
             background-color: #f8fafc;
+        }
+        .generated-email-editor {
+            min-height: 16rem;
+        }
+        .generated-email-editor .ql-editor {
+            min-height: 14rem;
         }
         .loading {
             display: none;
@@ -60,7 +67,10 @@
 
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                <textarea id="emailMessage" class="w-full p-3 border rounded-md h-64 focus:ring-red-500 focus:border-red-500"></textarea>
+                <div 
+                    id="emailMessageEditor" 
+                    class="generated-email-editor border rounded-md focus-within:ring-2 focus-within:ring-red-500 focus-within:border-red-500"
+                ></div>
                 <div class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                     <p class="text-sm text-yellow-800 font-medium">⚠️ Important Note:</p>
                     <p class="text-xs text-yellow-700">Please do not modify or remove the unsubscribe footer at the bottom of the generated email as well as the large spacing added above it.</p>
@@ -92,18 +102,58 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script>
         const FOOTER_SPACING_LINES = 200;
         const UNSUBSCRIBE_FOOTER = 'Remove future contact here\n{{unsubscribe_link}}';
+        let quillEditor;
+
         function ensureFooter(email) {
             if (!email || email.includes(UNSUBSCRIBE_FOOTER)) return email;
             return `${email}\n${'\n'.repeat(FOOTER_SPACING_LINES)}${UNSUBSCRIBE_FOOTER}`;
         }
+
+        function initializeQuillEditor() {
+            quillEditor = new Quill('#emailMessageEditor', {
+                theme: 'snow',
+                placeholder: 'Your email will appear here - feel free to edit the main content'
+            });
+        }
+
+        function setEmailContent(content) {
+            if (!quillEditor) return;
+            quillEditor.setText(content || '');
+            quillEditor.setSelection(0);
+            scrollQuillEditor('top');
+        }
+
+        function getEmailText() {
+            return quillEditor?.getText() || '';
+        }
+
+        /**
+         * Scroll the Quill editor content area.
+         * @param {'top'|'bottom'} position - where to scroll; defaults to top
+         */
+        function scrollQuillEditor(position = 'top') {
+            const editorRoot = quillEditor?.root;
+            if (!editorRoot) return;
+
+            requestAnimationFrame(() => {
+                if (position === 'bottom') {
+                    editorRoot.scrollTop = editorRoot.scrollHeight;
+                } else {
+                    editorRoot.scrollTop = 0;
+                }
+            });
+        }
+
         let currentIndex = 0;
         let ideas = [];
         let followUpData = {};
 
         document.addEventListener('DOMContentLoaded', () => {
+            initializeQuillEditor();
             ideas = JSON.parse(sessionStorage.getItem('followUpIdeas') || '[]');
             currentIndex = parseInt(sessionStorage.getItem('currentFollowUpIndex') || '0');
             followUpData = JSON.parse(sessionStorage.getItem('followUpData') || '{}');
@@ -128,10 +178,7 @@
             document.getElementById('fromName').value = approvedFromName;
             document.getElementById('waitDays').value = emailData.waitDays || 7;
             document.getElementById('emailSubject').value = emailData.subject || '';
-            document.getElementById('emailMessage').value = ensureFooter(emailData.email || '');
-            
-            // Scroll message field to top to show content instead of blank lines
-            document.getElementById('emailMessage').scrollTop = 0;
+            setEmailContent(ensureFooter(emailData.email || ''));
 
             // Update button text for last email
             const nextBtn = document.getElementById('approveNextBtn');
@@ -194,7 +241,7 @@
                     'action-name': document.getElementById('actionName').value,
                     fromname: document.getElementById('fromName').value,
                     'wait-days': document.getElementById('waitDays').value,
-                    message: '<pre>' + document.getElementById('emailMessage').value + '</pre>',
+                    message: document.getElementsByClassName('ql-editor')[0].innerHTML,
                     tempid: localStorage.getItem('tempid'),
                     subject: document.getElementById('emailSubject').value,
                 }
